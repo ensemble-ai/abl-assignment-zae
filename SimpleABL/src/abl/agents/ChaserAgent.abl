@@ -25,8 +25,13 @@ behaving_entity ChaserAgent {
 	register act moveDown(int) with MoveDown; 
 	register act moveLeft(int) with MoveLeft;
 	register act moveRight(int) with MoveRight;
+	register act moveTo(int, int, int) with MoveTo;
 	register act stop(int) with Stop;
-	register act fire(int, int, int, int) with Fire;
+	register act addBot() with AddBot;
+	register act fire(int, int, int) with Fire;
+	register act setColor(int, int, int, int) with SetColor;
+	register act resetMoves() with ResetMoves;
+	register act resetFired() with ResetFired;
 
 	/**
 	 * Define the sensors that add game state to working memory. Each sensor defines the name of the WME class
@@ -48,6 +53,7 @@ behaving_entity ChaserAgent {
 	 */
 	sequential behavior manageFiring() {
 		subgoal Wait(2000);					// this suspends the execution of the behavior
+		act addBot();
 		with (persistent) subgoal fire();
 	}
 
@@ -59,20 +65,75 @@ behaving_entity ChaserAgent {
 	sequential behavior fire() {
 		precondition {
 			(PlayerWME locationX::playerX locationY::playerY)	// locationX invokes PlayerMWE.getLocationX() 
-			(BotWME locationX::botX locationY::botY)   // :: is used to bind properties to behavior scoped variables
+			//(BotWME locationX::botX locationY::botY)   // :: is used to bind properties to behavior scoped variables
+			(BotWME id::id fired==false)
 		}
-
-		act fire(botX, botY, playerX, playerY);	
+		specificity 2;
+		
+		//act fire(botX, botY, playerX, playerY);	
+		act fire(playerX, playerY, id);
+	}
+	
+	sequential behavior fire() {
+		specificity 1;
+	
+		act resetFired();
 		subgoal Wait(500);
+		
+		succeed_step;
 	}
 
 	/**
 	 * Continuously move towards the player character.
 	 */
 	sequential behavior manageMovement() {
-		with (persistent) subgoal move();
+		//with (persistent) subgoal move();
+		with (persistent) subgoal moveTo();
 	}
 
+	/*
+	sequential behavior moveTo() {
+		precondition {
+			BehavingEntity.getBehavingEntity
+			(PlayerWME locationX::playerX locationY::playerY)	// 
+			//(BotWME id::botid )   // 
+		}
+		specificity 1;
+				
+		act moveTo(playerX, playerY);
+	}
+	*/
+	/**
+	 * Makes all bots move towards the player's current location
+	 */
+	sequential behavior moveTo() {
+		precondition { 
+			(PlayerWME locationX::playerX locationY::playerY)	// 
+			botWME = (BotWME id::id moved==false)
+		}
+		specificity 2;
+		
+		act moveTo(playerX, playerY, id);
+		subgoal moveTo();
+	}
+
+	
+	/**
+	 * Makes all bots move towards the player's current location
+	 * Will only drop into this instance of MoveTo after all bots have
+	 * gotten a chance to move. So, we reset the variable that marks whether
+	 * they have taken their "turn"
+	 */
+	sequential behavior moveTo() {
+		specificity 1;
+		
+		
+		act resetMoves();
+		
+		succeed_step;
+	}	
+		
+		
 	/**
 	 * Moves the bot up if the player is above the bot.
 	 * 
@@ -169,7 +230,7 @@ behaving_entity ChaserAgent {
      *
      * Note: this is a parallel behavior.
      * Note: the ABL compiler expects this to be the last behavior defined in the agent. 
-     * Note: prioirities are used to ensure all goals are pursued, since the move() goal can thrash in this simple example
+     * Note: priorities are used to ensure all goals are pursued, since the move() goal can thrash in this simple example
      */
     initial_tree {
     	with (priority 3) mental_act {

@@ -1,5 +1,6 @@
 package abl.wmes;
 
+import java.awt.Color;
 import java.awt.Point;
 
 import wm.WME;
@@ -17,16 +18,32 @@ public class BotWME extends WME {
 	/** Trajectory of the bot */
 	private Point trajectory;
 	
+	/** Target destination of the bot */
+	private Point destination;
+	
 	/** ID of the bot */
 	private int id;
+	
+	/** Color of the bot */
+	private Color color;
+	
+	/** Has this bot moved this round? */
+	private Boolean moved;
+	
+	/** Has this bot fired this round? */
+	private Boolean fired;
+	
 	
 	/**
 	 * Instantiates a working memory element for tracking a bot.
 	 */
-	public BotWME(Point location, Point trajectory, int id) {
+	public BotWME(Point location, Point trajectory, int id, Color color, Boolean moved, Boolean fired) {
 		this.location = location;
 		this.trajectory = trajectory;
 		this.id = id;
+		this.color = color;
+		this.moved = moved;
+		this.fired = fired;
 	}
 	
 	/**
@@ -64,4 +81,22 @@ public class BotWME extends WME {
 	public void setId(int id) {
 		this.id = id;
 	}
+	
+	public Boolean getMoved() {
+		return moved;
+	}
+	
+	public void setMoved(Boolean moved) {
+		this.moved = moved;
+	}
+
+	public Boolean getFired() {
+		return fired;
+	}
+
+	public void setFired(Boolean fired) {
+		this.fired = fired;
+	}
+	
+
 }

@@ -12,6 +12,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import abl.generated.ChaserAgent;
+//import abl.generated.Test;
 import game.input.*;
 /**
  *  Simple "game" for showing how to interface an ABL agent.
@@ -19,7 +20,7 @@ import game.input.*;
  * @author Ben Weber 3-7-11
  */
 public class GameEngine extends JPanel implements KeyListener {
-
+	
 	/** scene dimensions */
 	private Point dimensions = new Point(640, 480);
 
@@ -109,6 +110,11 @@ public class GameEngine extends JPanel implements KeyListener {
 		Bot b = new Bot();
 		b.setLocation(new Point(dimensions.x/2, dimensions.y/2));
 		bots.add(b);
+		/*
+		b = new Bot();
+		b.setLocation(new Point(dimensions.x/3, dimensions.y/3));
+		bots.add(b);
+		*/
 		
 		// spawn an update thread
 		new Thread() {
@@ -131,6 +137,7 @@ public class GameEngine extends JPanel implements KeyListener {
 	 */
 	public void startAgent() {
 		 ChaserAgent agent = new ChaserAgent();
+		 //Test agent = new Test();
 		 agent.startBehaving();
 	}
 
@@ -196,6 +203,7 @@ public class GameEngine extends JPanel implements KeyListener {
 		}
 
 		// spawn chaser bullets
+		/*
 		if (chaserBullet) {
 			chaserBullet = false;
 
@@ -204,6 +212,8 @@ public class GameEngine extends JPanel implements KeyListener {
 				bullets.add(bullet);
 			}
 		}
+		*/
+		
 	}
 
 	/**
@@ -273,6 +283,11 @@ public class GameEngine extends JPanel implements KeyListener {
 		bulletSource = source;
 		bulletTarget = target;
 		chaserBullet = true;
+
+		Bullet bullet = new Bullet(bulletSource, bulletTarget);
+		if (!bullet.isIdle()) {
+			bullets.add(bullet);
+		}
 	}
 
 	/**
@@ -312,6 +327,7 @@ public class GameEngine extends JPanel implements KeyListener {
 	 */
 	public void initializeInputs() {
 		this.inputs.add(new Exit());
+		this.inputs.add(new Spawn());
 	}
 
 
@@ -321,7 +337,6 @@ public class GameEngine extends JPanel implements KeyListener {
 	 * Note: tracks presses and releases with a boolean value to avoid duplicate key presses.
 	 */
 	public void keyPressed(KeyEvent e) {
-		
 
 		if (e.getKeyCode() == KeyEvent.VK_SPACE && keyPresses[KeyEvent.VK_SPACE] == false) {
 			spawnBullet = true;
@@ -346,4 +361,8 @@ public class GameEngine extends JPanel implements KeyListener {
 	}
 
 	public void keyTyped(KeyEvent e) {}
+
+	public Point getDimensions() {
+		return dimensions;
+	}
 }
