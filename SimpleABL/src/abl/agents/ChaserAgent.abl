@@ -27,6 +27,8 @@ behaving_entity ChaserAgent {
 	register act moveRight(int) with MoveRight;
 	register act stop(int) with Stop;
 	register act fire(int, int, int, int) with Fire;
+	register act moveTo(int, int, int) with MoveTo;
+	register act setColor(int, int, int, int) with SetColor;
 
 	/**
 	 * Define the sensors that add game state to working memory. Each sensor defines the name of the WME class
@@ -59,9 +61,10 @@ behaving_entity ChaserAgent {
 	sequential behavior fire() {
 		precondition {
 			(PlayerWME locationX::playerX locationY::playerY)	// locationX invokes PlayerMWE.getLocationX() 
-			(BotWME locationX::botX locationY::botY)   // :: is used to bind properties to behavior scoped variables
+			(BotWME locationX::botX locationY::botY id::id)   // :: is used to bind properties to behavior scoped variables
 		}
 
+		act setColor(0, 24, 144, id);
 		act fire(botX, botY, playerX, playerY);	
 		subgoal Wait(500);
 	}
@@ -70,8 +73,20 @@ behaving_entity ChaserAgent {
 	 * Continuously move towards the player character.
 	 */
 	sequential behavior manageMovement() {
-		with (persistent) subgoal move();
+		with (persistent) subgoal moveTo();
 	}
+	
+	sequential behavior moveTo() {
+		precondition {
+			(PlayerWME locationX::playerX locationY::playerY)
+			(BotWME locationY::botY id::id) 
+		}
+		specificity 3;
+ 
+		act moveTo(playerX, playerY, id);
+	}
+	
+ 		
 
 	/**
 	 * Moves the bot up if the player is above the bot.
@@ -82,7 +97,7 @@ behaving_entity ChaserAgent {
 	 */ 
 	sequential behavior move() {
 		precondition {
-			(PlayerWME locationY::playerY)
+			(PlayerWME locationX::playerX locationY::playerY)
 			(BotWME locationY::botY id::id) 
 			(botY > (playerY + botSpeed))
 		}
@@ -133,11 +148,13 @@ behaving_entity ChaserAgent {
 		act moveRight(id);
 	}
 	
+	
+	
 	/**
 	 * Stops the bot.
 	 *
 	 * Of the move behaviors, this is always evaluated last due to having the lowest specificity. 
-	 * Since it is evaluated last, it is only reached if none of the other behaviors can be activited,
+	 * Since it is evaluated last, it is only reached if none of the other behaviors can be activated,
 	 * which means the player and bot are overlapping. This is why there are no preconditions. 
 	 */
 	sequential behavior move() {
