@@ -25,7 +25,7 @@ behaving_entity ChaserAgent {
 	register act moveDown(int) with MoveDown; 
 	register act moveLeft(int) with MoveLeft;
 	register act moveRight(int) with MoveRight;
-	register act moveTo(int, int, int) with MoveTo;
+	register act moveTo(int, int, int, int) with MoveTo;
 	register act stop(int) with Stop;
 	register act addBot() with AddBot;
 	register act fire(int, int, int) with Fire;
@@ -46,7 +46,8 @@ behaving_entity ChaserAgent {
 	 * It is also possible to use constants from a Java interface (e.g.):
      * constants game.Constants;   
 	 */ 
-	int botSpeed = 2;	
+	int botSpeed = 2;
+	int distance = 15;
 
 	/**
 	 * After an initial delay, continuously fire bullets. 
@@ -113,7 +114,7 @@ behaving_entity ChaserAgent {
 		}
 		specificity 2;
 		
-		act moveTo(playerX, playerY, id);
+		act moveTo(playerX, playerY, id, distance);
 		subgoal moveTo();
 	}
 
