@@ -29,6 +29,7 @@ behaving_entity ChaserAgent {
 	register act fire(int, int, int, int) with Fire;
 	register act moveTo(int, int, int) with MoveTo;
 	register act setColor(int, int, int, int) with SetColor;
+	register act addBot() with AddBot;
 
 	/**
 	 * Define the sensors that add game state to working memory. Each sensor defines the name of the WME class
@@ -66,6 +67,7 @@ behaving_entity ChaserAgent {
 
 		act setColor(0, 24, 144, id);
 		act fire(botX, botY, playerX, playerY);	
+		act addBot();
 		subgoal Wait(500);
 	}
 

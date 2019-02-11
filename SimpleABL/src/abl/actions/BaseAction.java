@@ -9,7 +9,7 @@ import abl.runtime.PrimitiveAction;
 public abstract class BaseAction extends PrimitiveAction {
 
 	/**  
-	 * Performs the physcial act. 
+	 * Performs the physical act. 
 	 */
 	abstract public void execute(Object[] args);
 

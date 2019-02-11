@@ -307,6 +307,12 @@ public class GameEngine extends JPanel implements KeyListener {
 		return bots;
 	}
 	
+	public void addBots() {
+		Bot b = new Bot();
+		b.setLocation(new Point(dimensions.x/2, dimensions.y/2));
+		bots.add(b);
+	}
+	
 	/**
 	 * Initializes input handlers.
 	 */
