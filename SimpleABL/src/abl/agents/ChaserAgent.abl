@@ -26,6 +26,7 @@ behaving_entity ChaserAgent {
 	register act moveLeft(int) with MoveLeft;
 	register act moveRight(int) with MoveRight;
 	register act moveTo(int, int, int, int) with MoveTo;
+	register act setTrajectory(int, Point) with setTrajectory;
 	register act moveAway(int, int, int, int) with MoveAway;
 	register act stop(int) with Stop;
 	register act addBot() with AddBot;
@@ -96,17 +97,6 @@ behaving_entity ChaserAgent {
 		//with (persistent) subgoal moveAway();
 	}
 
-	/*
-	sequential behavior setTrajectory() {
-		precondition { 
-			(PlayerWME locationX::playerX locationY::playerY)	// 
-			tWME = (BotWME id::id1 moved==false)
-		}	
-		
-	}
-	*/
-	
-
 		
 	/**
 	 * Makes all bots move towards the player's current location
@@ -116,16 +106,24 @@ behaving_entity ChaserAgent {
 			(PlayerWME locationX::playerX locationY::playerY)
 			bWME = (BotWME id::id moved==false)
 			BBWME = (BlackBoardWME)
-			(trajectory::bWME.calcTrajectory())
-			(BBWME.isBotCollision(id, trajectory)==false)
+			trajectory = (bWME.calcTrajectory())
+			//success_condition {(uDoorWME name==doorName open==true)}
+			(BBWME.isBotCollision(id, trajectory, distance)==false)
 		}
 		specificity 3;
+		
+		{(
+				
+				
+		)}
+		
+		act setTrajectory(id, trajectory);
 		
 		//atomicaly?
 		//  set trajectory
 		//  check for collisions (adjust trajectory if needed)
-		act moveTo(playerX, playerY, id, distance);
-		act moveAway(playerX, playerY, id, distance);
+		//act moveTo(playerX, playerY, id, distance);
+		//act moveAway(playerX, playerY, id, distance);
 		//subgoal checkCollisions(id);
 		
 		subgoal moveTo();
