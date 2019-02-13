@@ -14,7 +14,7 @@ import abl.compiler.Abl;
 public class AgentCompiler {
 	
 	/** enable debug mode? */
-	//movedprivate static boolean debugMode = true;
+	//private static boolean debugMode = true;
 	private static boolean debugMode = false;
 
 	/**

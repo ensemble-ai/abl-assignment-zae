@@ -3,6 +3,7 @@ package abl.wmes;
 import java.awt.Color;
 import java.awt.Point;
 
+import game.GameEngine;
 import wm.WME;
 /**
  * Stores information about the bot.
@@ -45,6 +46,31 @@ public class BotWME extends WME {
 		this.moved = moved;
 		this.fired = fired;
 	}
+
+	public boolean check() {
+		return true;
+	}
+
+	public Point calcTrajectory(int targetX, int targetY) { 
+		Point point = location; 
+		int dirx = 0;
+		int diry = 0;
+		int speed = GameEngine.BotSpeed;
+		
+		if(point.getX() - targetX > speed) {	
+			dirx = -speed;
+		}else if(point.getX() - targetX < -speed) {
+			dirx = speed;			
+		}
+		if(point.getY() - targetY  > speed) {	
+			diry = -speed;
+		}else if(point.getY() - targetY < -speed) {
+			diry = speed;			
+		}
+		
+		return new Point(dirx, diry);
+	}
+	
 	
 	/**
 	 * Returns the x location of the bot. 

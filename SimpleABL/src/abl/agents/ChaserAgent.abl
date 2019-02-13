@@ -26,6 +26,7 @@ behaving_entity ChaserAgent {
 	register act moveLeft(int) with MoveLeft;
 	register act moveRight(int) with MoveRight;
 	register act moveTo(int, int, int, int) with MoveTo;
+	register act moveAway(int, int, int, int) with MoveAway;
 	register act stop(int) with Stop;
 	register act addBot() with AddBot;
 	register act fire(int, int, int) with Fire;
@@ -88,36 +89,48 @@ behaving_entity ChaserAgent {
 	 * Continuously move towards the player character.
 	 */
 	sequential behavior manageMovement() {
-		//with (persistent) subgoal move();
-		with (persistent) subgoal moveTo();
+		//with (persistent) subgoal move(); 
+		//subgoal setTrajectory();
+		//subgoal checkCollisions();
+		subgoal moveTo();
+		//with (persistent) subgoal moveAway();
 	}
 
 	/*
-	sequential behavior moveTo() {
-		precondition {
-			BehavingEntity.getBehavingEntity
+	sequential behavior setTrajectory() {
+		precondition { 
 			(PlayerWME locationX::playerX locationY::playerY)	// 
-			//(BotWME id::botid )   // 
-		}
-		specificity 1;
-				
-		act moveTo(playerX, playerY);
+			tWME = (BotWME id::id1 moved==false)
+		}	
+		
 	}
 	*/
+	
+
+		
 	/**
 	 * Makes all bots move towards the player's current location
 	 */
 	sequential behavior moveTo() {
 		precondition { 
-			(PlayerWME locationX::playerX locationY::playerY)	// 
-			botWME = (BotWME id::id moved==false)
+			(PlayerWME locationX::playerX locationY::playerY)
+			bWME = (BotWME id::id moved==false)
+			BBWME = (BlackBoardWME)
+			(trajectory::bWME.calcTrajectory())
+			(BBWME.isBotCollision(id, trajectory)==false)
 		}
-		specificity 2;
+		specificity 3;
 		
+		//atomicaly?
+		//  set trajectory
+		//  check for collisions (adjust trajectory if needed)
 		act moveTo(playerX, playerY, id, distance);
+		act moveAway(playerX, playerY, id, distance);
+		//subgoal checkCollisions(id);
+		
 		subgoal moveTo();
 	}
-
+	
 	
 	/**
 	 * Makes all bots move towards the player's current location
@@ -127,14 +140,11 @@ behaving_entity ChaserAgent {
 	 */
 	sequential behavior moveTo() {
 		specificity 1;
-		
-		
 		act resetMoves();
-		
 		succeed_step;
 	}	
 		
-		
+	
 	/**
 	 * Moves the bot up if the player is above the bot.
 	 * 
@@ -238,7 +248,8 @@ behaving_entity ChaserAgent {
 			System.out.println("Starting bot Agent");
     	}
      	
-    	with (priority 2) subgoal manageFiring();
-    	with (priority 1) subgoal manageMovement();
+    	//with (priority 2) subgoal manageFiring();
+    	//with (priority 1) subgoal manageMovement();
+    	with (priority 1, persistent) subgoal manageMovement();
     }
 }
