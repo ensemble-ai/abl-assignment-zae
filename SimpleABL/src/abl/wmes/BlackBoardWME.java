@@ -87,7 +87,6 @@ public class BlackBoardWME extends WME {
 	    			location.x + size > b.getX()&&
 	    			location.y < b.getY() + 4 &&
 	    			location.y + size > b.getY()) {
-				System.out.print("collide\n" + Integer.toString(id));
 				int targetbulletindex = (GameEngine.getInstance().getBullets()).indexOf(b);
 				GameEngine.getInstance().removeBullet(targetbulletindex);
 	    		return true;

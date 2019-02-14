@@ -74,6 +74,13 @@ public class GameEngine extends JPanel implements KeyListener {
 
 	/** target position of the chaser bullet */
 	private Point bulletTarget;
+	
+	/** who's bullet is it? */
+	public enum bulletorigin {
+		PLAYER, 
+		FACTION1, 
+		FACTION2
+	}
 
 	/** holds the input classes */
 	private ArrayList<IInput> inputs = new ArrayList<IInput>();
@@ -203,7 +210,7 @@ public class GameEngine extends JPanel implements KeyListener {
 		if (spawnBullet) {
 			spawnBullet = false;
 
-			Bullet bullet = new Bullet(playerLocation, chaserLocation);
+			Bullet bullet = new Bullet(playerLocation, chaserLocation, bulletorigin.PLAYER);
 			if (!bullet.isIdle()) {
 				bullets.add(bullet);
 			}
@@ -291,7 +298,7 @@ public class GameEngine extends JPanel implements KeyListener {
 		bulletTarget = target;
 		chaserBullet = true;
 
-		Bullet bullet = new Bullet(bulletSource, bulletTarget);
+		Bullet bullet = new Bullet(bulletSource, bulletTarget, bulletorigin.FACTION1);
 		if (!bullet.isIdle()) {
 			bullets.add(bullet);
 		}
