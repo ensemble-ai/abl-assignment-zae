@@ -6,6 +6,7 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Map;
 
+import game.Bot;
 import game.GameEngine;
 import wm.WME;
 /**
@@ -25,30 +26,67 @@ public class BlackBoardWME extends WME {
 		this.playerLocation = playerLocation;
 	}
 
-	public Boolean isBotCollision(int id, Point trajectory, int dist) {
+	/**
+	 * 		
+	 * @param id
+	 * @param dist
+	 * @param pDist
+	 * @return
+	 */
+	public Boolean isBotCollision(int id, int distance, int pDist) {
 		Point location = (Point)(bots.get(id));
+		Point trajectory = calcTrajectory(location.x, location.y, playerLocation.x, playerLocation.y);
 		Point newLocation = new Point(location.x + trajectory.x, location.y + trajectory.y);
-		int oldDist, newDist;
-
+		int dist = distance + Bot.Size;
 		
-		//check for collision with bots
+		if(pDist > calcDistance(location.x, location.y, playerLocation.x, playerLocation.y)) {
+			return true;
+		}//check for collisions with the player
+		
 	    Iterator<Map.Entry<Integer, Point>> entries = bots.entrySet().iterator();
 	    while (entries.hasNext()) {
 	        Map.Entry entry = (Map.Entry)entries.next();	
+	    	Point point = (Point)entry.getValue();
+	    
 	    	if((int)entry.getKey() == id) {
 	    		continue;
 	    	}
-    
-	    	Point point = (Point)entry.getValue();
-	    	oldDist = calcDistance(location.x, location.y, point.x, point.y);
-	    	newDist = calcDistance(newLocation.x, newLocation.y, point.x, point.y);
-	    	
-	    	if(oldDist > dist && newDist <= dist) {
+
+	    	if(newLocation.x < point.getX() + dist &&
+	    			newLocation.x + dist > point.getX()&&
+	    			newLocation.y < point.getY() + dist &&
+	    			newLocation.y + dist > point.getY()) {
 	    		return true;
-	    	}//will be a collision if we move
-	    }
-		
+	    	}//collision
+	    }//check for collision with bots
+	
 		return false;
+	}
+	
+	public Point calcTrajectory(int x, int y, int targetX, int targetY) {
+		final double sqrt2 = 1.41421356237;
+		int dirx = 0;
+		int diry = 0;
+		int speed = GameEngine.BotSpeed;
+		
+		if(x - targetX > speed) {	
+			dirx = -speed;
+		}else if(x - targetX < -speed) {
+			dirx = speed;			
+		}
+		if(y - targetY  > speed) {	
+			diry = -speed;
+		}else if(y - targetY < -speed) {
+			diry = speed;			
+		}
+	
+		if(dirx != 0 && diry != 0) { 
+			//TODO: check, how do ints get truncated when negative?
+			dirx = (int)((double)dirx * sqrt2); 
+			diry = (int)((double)diry * sqrt2); 
+		}//bot is heading diagonal, so mod the speed
+		
+		return new Point(dirx, diry);
 	}
 	
 	public int calcDistance(int playerX, int playerY, int botX, int botY) {
@@ -60,7 +98,7 @@ public class BlackBoardWME extends WME {
 		diffX = diffX*diffX;
 		diffY = diffY*diffY;
 	
-		return (int)Math.sqrt(diffX + diffY); 
+		return (int)Math.ceil(Math.sqrt(diffX + diffY)); 
 	}	
 	
 	

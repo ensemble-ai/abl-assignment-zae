@@ -4,6 +4,10 @@ import game.Bot;
 import game.GameEngine;
 import abl.runtime.BehavingEntity;
 import abl.wmes.BlackBoardWME;
+import abl.wmes.BotWME;
+
+import java.util.Map;
+import java.util.Hashtable;
 
 /**
  * Adds a BlackBoardWME object to working memory when sense is invoked.
@@ -24,6 +28,10 @@ public class BlackBoardSensor extends SerialSensor {
 			bots.put(b.getId(), b.getLocation());
 		}//store location of all bots
 		
-		new BlackBoardWME(bots);
+		
+		BehavingEntity.getBehavingEntity().addWME(
+				new BlackBoardWME(bots, GameEngine.getInstance().getPlayerLocation()));
+		
+		
 	}
 }

@@ -106,15 +106,10 @@ public class GameEngine extends JPanel implements KeyListener {
 		
 		this.initializeInputs();
 		
-		//spawn a single default bot
+		// spawn a single default bot
 		Bot b = new Bot();
 		b.setLocation(new Point(dimensions.x/2, dimensions.y/2));
 		bots.add(b);
-		/*
-		b = new Bot();
-		b.setLocation(new Point(dimensions.x/3, dimensions.y/3));
-		bots.add(b);
-		*/
 		
 		// spawn an update thread
 		new Thread() {
@@ -201,19 +196,6 @@ public class GameEngine extends JPanel implements KeyListener {
 				bullets.add(bullet);
 			}
 		}
-
-		// spawn chaser bullets
-		/*
-		if (chaserBullet) {
-			chaserBullet = false;
-
-			Bullet bullet = new Bullet(bulletSource, bulletTarget);
-			if (!bullet.isIdle()) {
-				bullets.add(bullet);
-			}
-		}
-		*/
-		
 	}
 
 	/**

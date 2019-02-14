@@ -23,6 +23,8 @@ public class MoveTo extends BaseAction {
 	 *  - 3: distance to maintain
 	 */
 	public void execute(Object[] args) {
+		final double sqrt2 = 1.41421356237;
+		
 		int dirx = 0;
 		int diry = 0;
 		int speed = GameEngine.BotSpeed;
@@ -42,30 +44,22 @@ public class MoveTo extends BaseAction {
 				}else if(point.getY() - (Integer)args[1] < -speed) {
 					diry = speed;			
 				}
-				
-				/*
-				//check for player
-				if(dist > calcDistance((Integer)args[0], (Integer)args[1], (int)point.getX(), (int)point.getY())) {
-					//move away from player instead of towards
-					dirx = -dirx;
-					diry = -diry;
-				}
-				*/
+		
+				if(dirx != 0 && diry != 0) { 
+					//TODO: check, how do ints get truncated when negative?
+					dirx = (int)((double)dirx * sqrt2); 
+					diry = (int)((double)diry * sqrt2); 
+				}//bot is heading diagonal, so mod the speed
 				
 				b.setTrajectory(new Point(dirx, diry));
 				
-				/*
-				 * if(checkForCollisions(dist, b)) {
-					//System.out.println("Collision!");
-					b.setTrajectory(new Point(0, 0));
-				}
-				*/ 
 				b.setMoved(true);
 				return;
 			}
 		}
 	}
 
+	/*
 	private boolean checkForCollisions(int dist, Bot movingBot) {
 		//check for collisions
 		Point oldLocation = movingBot.getLocation();
@@ -83,18 +77,7 @@ public class MoveTo extends BaseAction {
 		}	
 		return false;
 	}
+	*/
 	
-	
-	public int calcDistance(int playerX, int playerY, int botX, int botY) {
-		int diffX, diffY;
-		
-		diffX = playerX - botX;
-		diffY = playerY - botY;
-	
-		diffX = diffX*diffX;
-		diffY = diffY*diffY;
-	
-		return (int)Math.sqrt(diffX + diffY); 
-	}
 	
 }

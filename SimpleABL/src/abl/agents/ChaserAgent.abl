@@ -4,6 +4,7 @@ package abl.generated;
 import abl.wmes.*;
 import abl.actions.*;
 import abl.sensors.*;
+import java.awt.Point;
 // Imports are used the same way as in Java. Its necessary to import Sensor, Action, and WME classes.
 /** 
  * A simple agent that moves towards the player and occassionally fires bullets.
@@ -26,7 +27,7 @@ behaving_entity ChaserAgent {
 	register act moveLeft(int) with MoveLeft;
 	register act moveRight(int) with MoveRight;
 	register act moveTo(int, int, int, int) with MoveTo;
-	register act setTrajectory(int, Point) with setTrajectory;
+	register act setTrajectory(int, int, int, boolean) with SetTrajectory;
 	register act moveAway(int, int, int, int) with MoveAway;
 	register act stop(int) with Stop;
 	register act addBot() with AddBot;
@@ -41,6 +42,7 @@ behaving_entity ChaserAgent {
 	 */
     register wme PlayerWME with PlayerSensor;
     register wme BotWME with BotSensor;
+    register wme BlackBoardWME with BlackBoardSensor;
 
 	/**
 	 * Defines a variable scope to the agent, which can be used and modified in behaviors. 
@@ -50,6 +52,7 @@ behaving_entity ChaserAgent {
 	 */ 
 	int botSpeed = 2;
 	int distance = 15;
+	int playerDistance = 30;
 
 	/**
 	 * After an initial delay, continuously fire bullets. 
@@ -90,14 +93,10 @@ behaving_entity ChaserAgent {
 	 * Continuously move towards the player character.
 	 */
 	sequential behavior manageMovement() {
-		//with (persistent) subgoal move(); 
-		//subgoal setTrajectory();
-		//subgoal checkCollisions();
 		subgoal moveTo();
-		//with (persistent) subgoal moveAway();
 	}
 
-		
+
 	/**
 	 * Makes all bots move towards the player's current location
 	 */
@@ -106,25 +105,14 @@ behaving_entity ChaserAgent {
 			(PlayerWME locationX::playerX locationY::playerY)
 			bWME = (BotWME id::id moved==false)
 			BBWME = (BlackBoardWME)
-			trajectory = (bWME.calcTrajectory())
-			//success_condition {(uDoorWME name==doorName open==true)}
-			(BBWME.isBotCollision(id, trajectory, distance)==false)
 		}
 		specificity 3;
-		
-		{(
-				
-				
-		)}
-		
-		act setTrajectory(id, trajectory);
-		
-		//atomicaly?
-		//  set trajectory
-		//  check for collisions (adjust trajectory if needed)
-		//act moveTo(playerX, playerY, id, distance);
-		//act moveAway(playerX, playerY, id, distance);
-		//subgoal checkCollisions(id);
+	
+		if { (false==BBWME.isBotCollision(id, distance, playerDistance)) } {
+			act setTrajectory(id, playerX, playerY, false);
+		} else {
+			act setTrajectory(id, playerX, playerY, true);
+		}
 		
 		subgoal moveTo();
 	}
