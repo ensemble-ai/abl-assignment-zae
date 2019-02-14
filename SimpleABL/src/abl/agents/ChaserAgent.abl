@@ -48,12 +48,11 @@ behaving_entity ChaserAgent {
 	int botSpeed = 2;	
 	int distance = 40;
 	
-	wme FormationWME {
+	wme BotCountWME {
 		int count;
-		int botId;
 	}
 	
-	int MAX_Bots = 4;
+	int MAX_Bots = 3;
 
 	/**
 	 * After an initial delay, continuously fire bullets. 
@@ -66,25 +65,21 @@ behaving_entity ChaserAgent {
 	/**
 	 * After an initial delay, continuously generate bots. 
 	 */
-	sequential behavior manageBots() {
-		subgoal Wait(2000);					// this suspends the execution of the behavior
-		with (persistent) subgoal addBots();
-	}
-	
 	
 	sequential behavior addBots() {
 		precondition {
 			(BotWME id::id)
-			formationWME = (FormationWME count > 0 count::count)
+			countWME = (BotCountWME count > 0 count::count)
 		}
 	
 		mental_act {
-			formationWME.setCount(count - 1); 
+			countWME.setCount(count - 1); 
 			System.out.println("generated another bot but you can't see it hahahaha");
 			System.out.println(count);
 		}
-		act addBot();
 		subgoal Wait(2000);
+		act addBot();
+		subgoal addBots();
 	}
 
     /**
@@ -124,19 +119,15 @@ behaving_entity ChaserAgent {
 		int x, y;
 		
 		mental_act {
-			//FormationWME formationWME = new FormationWME();
-			//formationWME.setBotId(id);
-			//BehavingEntity.getBehavingEntity().addWME(formationWME);
+			System.out.println(id);
 			// calculate position to move to
 			x = playerX - distance;
 			y = playerY + distance;
-			//formation = 1;
 		}
  
 		act moveTo(x, y, id);
+		subgoal moveTo();
 	}
-	
-
 
 
 	/**
@@ -179,12 +170,12 @@ behaving_entity ChaserAgent {
      */
     initial_tree {
     	with (priority 3) mental_act {
-    		FormationWME formationWME = new FormationWME();
-    		formationWME.setCount(MAX_Bots);
-    		BehavingEntity.getBehavingEntity().addWME(formationWME);
+    		BotCountWME countWME = new BotCountWME();
+    		countWME.setCount(MAX_Bots);
+    		BehavingEntity.getBehavingEntity().addWME(countWME);
 			System.out.println("Starting bot Agent");
     	}
-     	with (priority 2) subgoal manageBots();
+     	with (priority 2) subgoal addBots();
     	with (priority 2) subgoal manageFiring();
     	with (priority 1) subgoal manageMovement();
     }
