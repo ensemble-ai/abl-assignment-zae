@@ -24,11 +24,14 @@ public class Bot {
 
 	private int formPos;
 	
+	private Boolean hasFired;
+	
 	public Bot() {
 		this.location = new Point(0,0);
 		this.trajectory = new Point(0,0);
 		this.id = IdCount++;
 		this.color = new Color(255, 165, 0);
+		this.hasFired = false;
 	}
 
 	public Point getLocation() {
@@ -81,5 +84,13 @@ public class Bot {
 
 	public void setFormPos(int formPos) {
 		this.formPos = formPos;
+	}
+
+	public Boolean firedCheck() {
+		return hasFired;
+	}
+	
+	public void setFiredCheck(Boolean hasFired) {
+		this.hasFired = hasFired;
 	}
 }

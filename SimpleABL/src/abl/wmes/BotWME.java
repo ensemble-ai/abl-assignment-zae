@@ -26,16 +26,19 @@ public class BotWME extends WME {
 	
 	private int formPos;
 	
+	private Boolean hasFired;
+	
 	
 	/**
 	 * Instantiates a working memory element for tracking a bot.
 	 */
-	public BotWME(Point location, Point trajectory, int id, Color color, int formPos) {
+	public BotWME(Point location, Point trajectory, int id, Color color, int formPos, Boolean hasFired) {
 		this.location = location;
 		this.trajectory = trajectory;
 		this.id = id;
 		this.color = color;
 		this.formPos = formPos;
+		this.hasFired = hasFired;
 	}
 	
 	/**
@@ -88,6 +91,14 @@ public class BotWME extends WME {
 	
 	public void setFormPos(int formPos) {
 		this.formPos = formPos;
+	}
+
+	public Boolean getHasFired() {
+		return hasFired;
+	}
+
+	public void setHasFired(Boolean hasFired) {
+		this.hasFired = hasFired;
 	}
 	
 }

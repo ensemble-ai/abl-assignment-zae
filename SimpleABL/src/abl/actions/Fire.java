@@ -4,9 +4,6 @@ import game.GameEngine;
 
 import java.awt.Point;
 /**
- * Fires a bullet. 
- * 
- * @author Ben Weber 3-7-11
  */
 public class Fire extends BaseAction {
 

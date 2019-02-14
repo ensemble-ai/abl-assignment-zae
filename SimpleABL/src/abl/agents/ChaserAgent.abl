@@ -31,6 +31,8 @@ behaving_entity ChaserAgent {
 	register act moveTo(int, int, int) with MoveTo;
 	register act setColor(int, int, int, int) with SetColor;
 	register act addBot(int, int) with AddBot;
+	register act hasFired(int, boolean) with HasFired;
+	register act resetFired() with ResetFired;
 
 	/**
 	 * Define the sensors that add game state to working memory. Each sensor defines the name of the WME class
@@ -53,7 +55,7 @@ behaving_entity ChaserAgent {
 		int count;
 	}
 	
-	int MAX_Bots = 4;		// additional number of bots
+	int MAX_Bots = 3;		// additional number of bots
 	int positions = 4;		// formation positions
 
 	/**
@@ -97,12 +99,26 @@ behaving_entity ChaserAgent {
 	sequential behavior fire() {
 		precondition {
 			(PlayerWME locationX::playerX locationY::playerY)	// locationX invokes PlayerMWE.getLocationX() 
-			(BotWME locationX::botX locationY::botY id::id)   // :: is used to bind properties to behavior scoped variables
+			(BotWME locationX::botX locationY::botY id::id hasFired == false)   // :: is used to bind properties to behavior scoped variables
 		}
-
+		
+		specificity 3;
+		
+		
+		act hasFired(id, true);
 		act setColor(0, 24, 144, id);
 		act fire(botX, botY, playerX, playerY);	
+		subgoal Wait(100);
+	}
+	
+	sequential behavior fire() {
+		
+		specificity 1;
+		
+		act resetFired();
 		subgoal Wait(500);
+		
+		succeed_step;
 	}
 
 	/**
@@ -124,7 +140,6 @@ behaving_entity ChaserAgent {
 		int x, y;
 		
 		mental_act {
-		System.out.println(botWME);
 			// calculate position to move to
 			x = playerX - distance;
 			y = playerY + distance;
@@ -147,7 +162,6 @@ behaving_entity ChaserAgent {
 		int x, y;
 		
 		mental_act {
-		System.out.println(botWME);
 			// calculate position to move to
 			x = playerX + distance;
 			y = playerY + distance;
@@ -170,7 +184,6 @@ behaving_entity ChaserAgent {
 		int x, y;
 		
 		mental_act {
-		System.out.println(botWME);
 			// calculate position to move to
 			x = playerX + distance;
 			y = playerY - distance;
@@ -193,7 +206,6 @@ behaving_entity ChaserAgent {
 		int x, y;
 		
 		mental_act {
-		System.out.println(botWME);
 			// calculate position to move to
 			x = playerX - distance;
 			y = playerY - distance;
@@ -250,7 +262,7 @@ behaving_entity ChaserAgent {
 			System.out.println("Starting bot Agent");
     	}
      	with (priority 2) subgoal addBots();
-    	//with (priority 2) subgoal manageFiring();
+    	with (priority 2) subgoal manageFiring();
     	with (priority 1) subgoal manageMovement();
     }
 }
