@@ -14,7 +14,8 @@ import abl.compiler.Abl;
 public class AgentCompiler {
 	
 	/** enable debug mode? */
-	private static boolean debugMode = true;
+	//private static boolean debugMode = true;
+	private static boolean debugMode = false;
 
 	/**
 	 * Runs the ABL compiler. 
@@ -23,9 +24,11 @@ public class AgentCompiler {
 
 		if (debugMode) {
 			Abl.main(new String[] { "-g2", "-d", "src", "src/abl/agents/ChaserAgent.abl" });
+//			Abl.main(new String[] { "-g2", "-d", "src", "src/abl/agents/Test.abl" });
 		}
 		else {
 			Abl.main(new String[] { "-d", "src", "src/abl/agents/ChaserAgent.abl" });
+//			Abl.main(new String[] { "-d", "src", "src/abl/agents/Test.abl" });
 		}
 	}
 }

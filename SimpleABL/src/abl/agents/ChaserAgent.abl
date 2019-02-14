@@ -4,6 +4,7 @@ package abl.generated;
 import abl.wmes.*;
 import abl.actions.*;
 import abl.sensors.*;
+import java.awt.Point;
 // Imports are used the same way as in Java. Its necessary to import Sensor, Action, and WME classes.
 /** 
  * A simple agent that moves towards the player and occassionally fires bullets.
@@ -25,8 +26,15 @@ behaving_entity ChaserAgent {
 	register act moveDown(int) with MoveDown; 
 	register act moveLeft(int) with MoveLeft;
 	register act moveRight(int) with MoveRight;
+	register act moveTo(int, int, int, int) with MoveTo;
+	register act setTrajectory(int, int, int, boolean) with SetTrajectory;
+	register act moveAway(int, int, int, int) with MoveAway;
 	register act stop(int) with Stop;
-	register act fire(int, int, int, int) with Fire;
+	register act addBot() with AddBot;
+	register act fire(int, int, int) with Fire;
+	register act setColor(int, int, int, int) with SetColor;
+	register act resetMoves() with ResetMoves;
+	register act resetFired() with ResetFired;
 
 	/**
 	 * Define the sensors that add game state to working memory. Each sensor defines the name of the WME class
@@ -34,6 +42,7 @@ behaving_entity ChaserAgent {
 	 */
     register wme PlayerWME with PlayerSensor;
     register wme BotWME with BotSensor;
+    register wme BlackBoardWME with BlackBoardSensor;
 
 	/**
 	 * Defines a variable scope to the agent, which can be used and modified in behaviors. 
@@ -41,13 +50,16 @@ behaving_entity ChaserAgent {
 	 * It is also possible to use constants from a Java interface (e.g.):
      * constants game.Constants;   
 	 */ 
-	int botSpeed = 2;	
+	int botSpeed = 2;
+	int distance = 15;
+	int playerDistance = 30;
 
 	/**
 	 * After an initial delay, continuously fire bullets. 
 	 */
 	sequential behavior manageFiring() {
 		subgoal Wait(2000);					// this suspends the execution of the behavior
+		act addBot();
 		with (persistent) subgoal fire();
 	}
 
@@ -59,20 +71,66 @@ behaving_entity ChaserAgent {
 	sequential behavior fire() {
 		precondition {
 			(PlayerWME locationX::playerX locationY::playerY)	// locationX invokes PlayerMWE.getLocationX() 
-			(BotWME locationX::botX locationY::botY)   // :: is used to bind properties to behavior scoped variables
+			//(BotWME locationX::botX locationY::botY)   // :: is used to bind properties to behavior scoped variables
+			(BotWME id::id fired==false)
 		}
-
-		act fire(botX, botY, playerX, playerY);	
+		specificity 2;
+		
+		//act fire(botX, botY, playerX, playerY);	
+		act fire(playerX, playerY, id);
+	}
+	
+	sequential behavior fire() {
+		specificity 1;
+	
+		act resetFired();
 		subgoal Wait(500);
+		
+		succeed_step;
 	}
 
 	/**
 	 * Continuously move towards the player character.
 	 */
 	sequential behavior manageMovement() {
-		with (persistent) subgoal move();
+		subgoal moveTo();
 	}
 
+
+	/**
+	 * Makes all bots move towards the player's current location
+	 */
+	sequential behavior moveTo() {
+		precondition { 
+			(PlayerWME locationX::playerX locationY::playerY)
+			bWME = (BotWME id::id moved==false)
+			BBWME = (BlackBoardWME)
+		}
+		specificity 3;
+	
+		if { (false==BBWME.isBotCollision(id, distance, playerDistance)) } {
+			act setTrajectory(id, playerX, playerY, false);
+		} else {
+			act setTrajectory(id, playerX, playerY, true);
+		}
+		
+		subgoal moveTo();
+	}
+	
+	
+	/**
+	 * Makes all bots move towards the player's current location
+	 * Will only drop into this instance of MoveTo after all bots have
+	 * gotten a chance to move. So, we reset the variable that marks whether
+	 * they have taken their "turn"
+	 */
+	sequential behavior moveTo() {
+		specificity 1;
+		act resetMoves();
+		succeed_step;
+	}	
+		
+	
 	/**
 	 * Moves the bot up if the player is above the bot.
 	 * 
@@ -169,14 +227,15 @@ behaving_entity ChaserAgent {
      *
      * Note: this is a parallel behavior.
      * Note: the ABL compiler expects this to be the last behavior defined in the agent. 
-     * Note: prioirities are used to ensure all goals are pursued, since the move() goal can thrash in this simple example
+     * Note: priorities are used to ensure all goals are pursued, since the move() goal can thrash in this simple example
      */
     initial_tree {
     	with (priority 3) mental_act {
 			System.out.println("Starting bot Agent");
     	}
      	
-    	with (priority 2) subgoal manageFiring();
-    	with (priority 1) subgoal manageMovement();
+    	//with (priority 2) subgoal manageFiring();
+    	//with (priority 1) subgoal manageMovement();
+    	with (priority 1, persistent) subgoal manageMovement();
     }
 }

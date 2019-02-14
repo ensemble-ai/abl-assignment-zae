@@ -4,7 +4,7 @@ import java.awt.Color;
 import java.awt.Point;
 
 public class Bot {
- 
+	
 	public static final int Size = 10;
 	
 	static int IdCount = 0;
@@ -15,6 +15,12 @@ public class Bot {
 	/** Trajectory of the bot */
 	private Point trajectory;
 	
+	/** Has the bot moved this round? */
+	private boolean moved;
+	
+	/** Has the bot fired this round? */
+	private boolean fired;
+
 	/** unique bot ID */
 	private int id;
 
@@ -44,7 +50,8 @@ public class Bot {
 	public void setTrajectory(Point trajectory) {
 		this.trajectory = trajectory;
 	}
-	
+
+
 	public int getX( ) {
 		return this.location.x;
 	}
@@ -72,4 +79,22 @@ public class Bot {
 	public void setColor(Color color) {
 		this.color = color;
 	}
+	
+	public Boolean isMoved() {
+		return moved;
+	}
+	
+	public void setMoved(Boolean moved) {
+		this.moved = moved;
+	}
+
+	public Boolean isFired() {
+		return fired;
+	}
+
+	public void setFired(boolean fired) {
+		this.fired = fired;
+	}
+	
+	
 }
