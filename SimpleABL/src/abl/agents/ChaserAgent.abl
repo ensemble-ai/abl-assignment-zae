@@ -37,6 +37,7 @@ behaving_entity ChaserAgent {
 	 */
     register wme PlayerWME with PlayerSensor;
     register wme BotWME with BotSensor;
+    //register wme FormationWME with FormationSensor;
 
 	/**
 	 * Defines a variable scope to the agent, which can be used and modified in behaviors. 
@@ -45,6 +46,14 @@ behaving_entity ChaserAgent {
      * constants game.Constants;   
 	 */ 
 	int botSpeed = 2;	
+	int distance = 40;
+	
+	wme FormationWME {
+		int count;
+		int botId;
+	}
+	
+	int MAX_Bots = 4;
 
 	/**
 	 * After an initial delay, continuously fire bullets. 
@@ -53,12 +62,37 @@ behaving_entity ChaserAgent {
 		subgoal Wait(2000);					// this suspends the execution of the behavior
 		with (persistent) subgoal fire();
 	}
+	
+	/**
+	 * After an initial delay, continuously generate bots. 
+	 */
+	sequential behavior manageBots() {
+		subgoal Wait(2000);					// this suspends the execution of the behavior
+		with (persistent) subgoal addBots();
+	}
+	
+	
+	sequential behavior addBots() {
+		precondition {
+			(BotWME id::id)
+			formationWME = (FormationWME count > 0 count::count)
+		}
+	
+		mental_act {
+			formationWME.setCount(count - 1); 
+			System.out.println("generated another bot but you can't see it hahahaha");
+			System.out.println(count);
+		}
+		act addBot();
+		subgoal Wait(2000);
+	}
 
     /**
      * Fires a bullet at the player character using the bot position at the source and the player position as the target
      *
      * Each fire action is followed by a cooldown period. 
      */
+	
 	sequential behavior fire() {
 		precondition {
 			(PlayerWME locationX::playerX locationY::playerY)	// locationX invokes PlayerMWE.getLocationX() 
@@ -67,7 +101,7 @@ behaving_entity ChaserAgent {
 
 		act setColor(0, 24, 144, id);
 		act fire(botX, botY, playerX, playerY);	
-		act addBot();
+		//act addBot();
 		subgoal Wait(500);
 	}
 
@@ -79,79 +113,32 @@ behaving_entity ChaserAgent {
 	}
 	
 	sequential behavior moveTo() {
+		
 		precondition {
 			(PlayerWME locationX::playerX locationY::playerY)
-			(BotWME locationY::botY id::id) 
+			(BotWME id::id)
 		}
+		
 		specificity 3;
+		
+		int x, y;
+		
+		mental_act {
+			//FormationWME formationWME = new FormationWME();
+			//formationWME.setBotId(id);
+			//BehavingEntity.getBehavingEntity().addWME(formationWME);
+			// calculate position to move to
+			x = playerX - distance;
+			y = playerY + distance;
+			//formation = 1;
+		}
  
-		act moveTo(playerX, playerY, id);
+		act moveTo(x, y, id);
 	}
 	
- 		
 
-	/**
-	 * Moves the bot up if the player is above the bot.
-	 * 
-	 * Note: The agent prefers vertical over horizonal movement, because the move up and move down behaviors have 
-	 * a higher specificity than the other move behaviors. Therefore, if the agent needs to be moved up or down,
-	 * they are chosen first. 
-	 */ 
-	sequential behavior move() {
-		precondition {
-			(PlayerWME locationX::playerX locationY::playerY)
-			(BotWME locationY::botY id::id) 
-			(botY > (playerY + botSpeed))
-		}
-		specificity 3;
- 
-		act moveUp(id);
-	}
- 	
-	/**
-	 * Moves the bot down if the player is below the bot.
-	 */
-	sequential behavior move() {
-		precondition {
-			(PlayerWME locationY::playerY)
-			(BotWME locationY::botY id::id) 
-			(botY < (playerY - botSpeed))
-		}
-		specificity 3;
 
-		act moveDown(id);
-	}
- 	 
-	/**
-	 * Moves the bot left if the player to the left of the bot.
-	 */
-	sequential behavior move() {
-		precondition {
-			(PlayerWME locationX::playerX)
-			(BotWME locationX::botX id::id) 
-			(botX > (playerX + botSpeed))
-		}
-		specificity 2;
 
-		act moveLeft(id);
-	}
-
-	/**
-	 * Moves the bot right if the player to the right of the bot.
-	 */
-	sequential behavior move() {
-		precondition { 
-			(PlayerWME locationX::playerX)
-			(BotWME locationX::botX id::id) 
-			(botX < (playerX - botSpeed))
-		}
-		specificity 2;
-
-		act moveRight(id);
-	}
-	
-	
-	
 	/**
 	 * Stops the bot.
 	 *
@@ -159,7 +146,7 @@ behaving_entity ChaserAgent {
 	 * Since it is evaluated last, it is only reached if none of the other behaviors can be activated,
 	 * which means the player and bot are overlapping. This is why there are no preconditions. 
 	 */
-	sequential behavior move() {
+	sequential behavior moveTo() {
 		precondition {
 			(BotWME id::id)
 		}
@@ -192,9 +179,12 @@ behaving_entity ChaserAgent {
      */
     initial_tree {
     	with (priority 3) mental_act {
+    		FormationWME formationWME = new FormationWME();
+    		formationWME.setCount(MAX_Bots);
+    		BehavingEntity.getBehavingEntity().addWME(formationWME);
 			System.out.println("Starting bot Agent");
     	}
-     	
+     	with (priority 2) subgoal manageBots();
     	with (priority 2) subgoal manageFiring();
     	with (priority 1) subgoal manageMovement();
     }

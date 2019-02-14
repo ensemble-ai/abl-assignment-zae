@@ -24,6 +24,7 @@ public class BotWME extends WME {
 	/** Color of the bot */
 	private Color color;
 	
+	
 	/**
 	 * Instantiates a working memory element for tracking a bot.
 	 */
