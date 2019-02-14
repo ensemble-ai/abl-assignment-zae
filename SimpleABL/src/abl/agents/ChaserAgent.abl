@@ -10,6 +10,7 @@ import abl.sensors.*;
  *
  * @author Josh McCoy 1-23-2019
  * @author Ben Weber 3-7-11
+ * @author Zee chen 2-13-2019
  */ 
 behaving_entity ChaserAgent {
 // This defines a name for the agent 
@@ -96,7 +97,6 @@ behaving_entity ChaserAgent {
 
 		act setColor(0, 24, 144, id);
 		act fire(botX, botY, playerX, playerY);	
-		//act addBot();
 		subgoal Wait(500);
 	}
 
@@ -104,14 +104,16 @@ behaving_entity ChaserAgent {
 	 * Continuously move towards the player character.
 	 */
 	sequential behavior manageMovement() {
-		with (persistent) subgoal moveTo();
+		// with (persistent) subgoal moveTo();
+		subgoal moveTo();
 	}
 	
 	sequential behavior moveTo() {
-		
 		precondition {
 			(PlayerWME locationX::playerX locationY::playerY)
-			(BotWME id::id)
+			(BotWME id::id id==0)
+			// condition
+			
 		}
 		
 		specificity 3;
@@ -119,10 +121,75 @@ behaving_entity ChaserAgent {
 		int x, y;
 		
 		mental_act {
-			System.out.println(id);
 			// calculate position to move to
 			x = playerX - distance;
 			y = playerY + distance;
+		}
+ 
+		act moveTo(x, y, id);
+		subgoal moveTo();
+	}
+	
+	sequential behavior moveTo() {
+		precondition {
+			(PlayerWME locationX::playerX locationY::playerY)
+			(BotWME id::id id==1)
+			// condition
+			
+		}
+		
+		specificity 3;
+		
+		int x, y;
+		
+		mental_act {
+			// calculate position to move to
+			x = playerX + distance;
+			y = playerY + distance;
+		}
+ 
+		act moveTo(x, y, id);
+		subgoal moveTo();
+	}
+	
+	sequential behavior moveTo() {
+		precondition {
+			(PlayerWME locationX::playerX locationY::playerY)
+			(BotWME id::id id==2)
+			// condition
+			
+		}
+		
+		specificity 3;
+		
+		int x, y;
+		
+		mental_act {
+			// calculate position to move to
+			x = playerX + distance;
+			y = playerY - distance;
+		}
+ 
+		act moveTo(x, y, id);
+		subgoal moveTo();
+	}
+	
+	sequential behavior moveTo() {
+		precondition {
+			(PlayerWME locationX::playerX locationY::playerY)
+			(BotWME id::id id==3)
+			// condition
+			
+		}
+		
+		specificity 3;
+		
+		int x, y;
+		
+		mental_act {
+			// calculate position to move to
+			x = playerX - distance;
+			y = playerY - distance;
 		}
  
 		act moveTo(x, y, id);
@@ -166,7 +233,7 @@ behaving_entity ChaserAgent {
      *
      * Note: this is a parallel behavior.
      * Note: the ABL compiler expects this to be the last behavior defined in the agent. 
-     * Note: prioirities are used to ensure all goals are pursued, since the move() goal can thrash in this simple example
+     * Note: priorities are used to ensure all goals are pursued, since the move() goal can thrash in this simple example
      */
     initial_tree {
     	with (priority 3) mental_act {
@@ -176,7 +243,7 @@ behaving_entity ChaserAgent {
 			System.out.println("Starting bot Agent");
     	}
      	with (priority 2) subgoal addBots();
-    	with (priority 2) subgoal manageFiring();
+    	//with (priority 2) subgoal manageFiring();
     	with (priority 1) subgoal manageMovement();
     }
 }
