@@ -21,6 +21,8 @@ public class Bot {
 	private Color color;
 	
 	private int size = Size;
+
+	private int formPos;
 	
 	public Bot() {
 		this.location = new Point(0,0);
@@ -71,5 +73,13 @@ public class Bot {
 
 	public void setColor(Color color) {
 		this.color = color;
+	}
+	
+	public int getFormPos() {
+		return formPos;
+	}
+
+	public void setFormPos(int formPos) {
+		this.formPos = formPos;
 	}
 }

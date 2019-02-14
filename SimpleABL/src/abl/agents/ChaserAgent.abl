@@ -30,7 +30,7 @@ behaving_entity ChaserAgent {
 	register act fire(int, int, int, int) with Fire;
 	register act moveTo(int, int, int) with MoveTo;
 	register act setColor(int, int, int, int) with SetColor;
-	register act addBot() with AddBot;
+	register act addBot(int, int) with AddBot;
 
 	/**
 	 * Define the sensors that add game state to working memory. Each sensor defines the name of the WME class
@@ -53,7 +53,8 @@ behaving_entity ChaserAgent {
 		int count;
 	}
 	
-	int MAX_Bots = 3;
+	int MAX_Bots = 4;		// additional number of bots
+	int positions = 4;		// formation positions
 
 	/**
 	 * After an initial delay, continuously fire bullets. 
@@ -70,16 +71,20 @@ behaving_entity ChaserAgent {
 	sequential behavior addBots() {
 		precondition {
 			(BotWME id::id)
-			countWME = (BotCountWME count > 0 count::count)
+			countWME = (BotCountWME count < MAX_Bots count::count)
 		}
+		
+		int c;
 	
 		mental_act {
-			countWME.setCount(count - 1); 
+			countWME.setCount(count + 1); 
 			System.out.println("generated another bot but you can't see it hahahaha");
 			System.out.println(count);
+			c = countWME.getCount();
+			System.out.println(c);
 		}
 		subgoal Wait(2000);
-		act addBot();
+		act addBot(c, positions);
 		subgoal addBots();
 	}
 
@@ -104,16 +109,14 @@ behaving_entity ChaserAgent {
 	 * Continuously move towards the player character.
 	 */
 	sequential behavior manageMovement() {
-		// with (persistent) subgoal moveTo();
-		subgoal moveTo();
+		with (persistent) subgoal moveTo();
+		//spawngoal moveTo();
 	}
 	
 	sequential behavior moveTo() {
 		precondition {
 			(PlayerWME locationX::playerX locationY::playerY)
-			(BotWME id::id id==0)
-			// condition
-			
+			botWME = (BotWME id::id formPos==0)			
 		}
 		
 		specificity 3;
@@ -121,6 +124,7 @@ behaving_entity ChaserAgent {
 		int x, y;
 		
 		mental_act {
+		System.out.println(botWME);
 			// calculate position to move to
 			x = playerX - distance;
 			y = playerY + distance;
@@ -133,7 +137,7 @@ behaving_entity ChaserAgent {
 	sequential behavior moveTo() {
 		precondition {
 			(PlayerWME locationX::playerX locationY::playerY)
-			(BotWME id::id id==1)
+			botWME = (BotWME id::id formPos==1)
 			// condition
 			
 		}
@@ -143,6 +147,7 @@ behaving_entity ChaserAgent {
 		int x, y;
 		
 		mental_act {
+		System.out.println(botWME);
 			// calculate position to move to
 			x = playerX + distance;
 			y = playerY + distance;
@@ -155,7 +160,7 @@ behaving_entity ChaserAgent {
 	sequential behavior moveTo() {
 		precondition {
 			(PlayerWME locationX::playerX locationY::playerY)
-			(BotWME id::id id==2)
+			botWME = (BotWME id::id formPos==2)
 			// condition
 			
 		}
@@ -165,6 +170,7 @@ behaving_entity ChaserAgent {
 		int x, y;
 		
 		mental_act {
+		System.out.println(botWME);
 			// calculate position to move to
 			x = playerX + distance;
 			y = playerY - distance;
@@ -177,7 +183,7 @@ behaving_entity ChaserAgent {
 	sequential behavior moveTo() {
 		precondition {
 			(PlayerWME locationX::playerX locationY::playerY)
-			(BotWME id::id id==3)
+			botWME = (BotWME id::id formPos==3)
 			// condition
 			
 		}
@@ -187,6 +193,7 @@ behaving_entity ChaserAgent {
 		int x, y;
 		
 		mental_act {
+		System.out.println(botWME);
 			// calculate position to move to
 			x = playerX - distance;
 			y = playerY - distance;
@@ -238,7 +245,7 @@ behaving_entity ChaserAgent {
     initial_tree {
     	with (priority 3) mental_act {
     		BotCountWME countWME = new BotCountWME();
-    		countWME.setCount(MAX_Bots);
+    		countWME.setCount(0);
     		BehavingEntity.getBehavingEntity().addWME(countWME);
 			System.out.println("Starting bot Agent");
     	}
