@@ -8,6 +8,7 @@ import java.util.Map;
 
 import game.Bot;
 import game.GameEngine;
+import game.Wall;
 import wm.WME;
 /**
  * Stores information that will be accessible to all bots 
@@ -38,6 +39,7 @@ public class BlackBoardWME extends WME {
 		Point trajectory = calcTrajectory(location.x, location.y, playerLocation.x, playerLocation.y);
 		Point newLocation = new Point(location.x + trajectory.x, location.y + trajectory.y);
 		int dist = distance + Bot.Size;
+		int size = Bot.Size;
 		
 		if(pDist > calcDistance(location.x, location.y, playerLocation.x, playerLocation.y)) {
 			return true;
@@ -59,6 +61,15 @@ public class BlackBoardWME extends WME {
 	    		return true;
 	    	}//collision
 	    }//check for collision with bots
+	    
+		for(Wall w : GameEngine.getInstance().getWalls()) {
+	    	if(newLocation.x < w.getX() + w.getWidth() &&
+	    			newLocation.x + size > w.getX()&&
+	    			newLocation.y < w.getY() + w.getHeight() &&
+	    			newLocation.y + size > w.getY()) {
+	    		return true;
+	    	}//collision	
+		}
 	
 		return false;
 	}

@@ -36,6 +36,9 @@ public class GameEngine extends JPanel implements KeyListener {
 	/** the list of bots */
 	private ArrayList<Bot> bots = new ArrayList<Bot>();
 	
+	/** the list of walls */
+	private ArrayList<Wall> walls = new ArrayList<Wall>();
+
 	/** trajectory of the chaser */
 	private Point chaserTrajectory = new Point(0, 0);
 
@@ -110,6 +113,9 @@ public class GameEngine extends JPanel implements KeyListener {
 		Bot b = new Bot();
 		b.setLocation(new Point(dimensions.x/2, dimensions.y/2));
 		bots.add(b);
+	
+		Wall w = new Wall(new Point(60, 60), 100, 60);
+		walls.add(w);
 		
 		// spawn an update thread
 		new Thread() {
@@ -157,6 +163,12 @@ public class GameEngine extends JPanel implements KeyListener {
 		for (Bullet bullet : bullets) {
 			g.fillRect(bullet.getX() + (playerSize - bulletSize)/2, bullet.getY() + (playerSize - bulletSize)/2, bulletSize, bulletSize);
 		}
+		
+		g.setColor(new Color(244, 66, 206));;
+		for (Wall wall : walls) {
+			g.fillRect(wall.getX(), wall.getY(), wall.getWidth(), wall.getHeight());
+		}
+		
 	}
 
 	/**
@@ -231,7 +243,9 @@ public class GameEngine extends JPanel implements KeyListener {
 		playerY = Math.max(0, playerY);
 		playerY = Math.min(dimensions.y, playerY);
 
-		playerLocation = new Point(playerX, playerY);
+		if(false == checkWallCollisions(playerX, playerY)) {
+			playerLocation = new Point(playerX, playerY);
+		}
 
 		// update bot locations
 		for(Bot b : this.bots) {
@@ -245,10 +259,21 @@ public class GameEngine extends JPanel implements KeyListener {
 
 			b.setLocation(new Point(botX, botY));
 		}
-		
-		
 	}
 
+	
+	private boolean checkWallCollisions(int x, int y) {
+		for(Wall w : GameEngine.getInstance().getWalls()) {
+		    if(x < w.getX() + w.getWidth() &&
+		    		x + playerSize > w.getX()&&
+    				y < w.getY() + w.getHeight() &&
+    				y + playerSize > w.getY()) {
+		    	return true;
+		    }
+    	}//collision
+		return false;
+	}
+	
 	/**
 	 * Sets the trajectory of the chaser object.
 	 *
@@ -300,8 +325,18 @@ public class GameEngine extends JPanel implements KeyListener {
 		return chaserTrajectory;
 	}
 	
+	/**
+	 * Returns list of all bots 
+	 */
 	public ArrayList<Bot> getBots() {
 		return bots;
+	}
+
+	/**
+	 * Returns list of all walls 
+	 */
+	public ArrayList<Wall> getWalls() {
+		return walls;
 	}
 	
 	/**
