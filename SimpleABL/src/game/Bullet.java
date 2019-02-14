@@ -70,4 +70,12 @@ public class Bullet {
 	public int getY() {
 		return (int)y;
 	}
+	
+	public int getdX() {
+		return (int)dx;
+	}
+	
+	public int getdY() {
+		return (int)dy;
+	}
 }

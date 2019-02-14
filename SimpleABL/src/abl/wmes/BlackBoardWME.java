@@ -9,6 +9,7 @@ import java.util.Map;
 import game.Bot;
 import game.GameEngine;
 import game.Wall;
+import game.Bullet;
 import wm.WME;
 /**
  * Stores information that will be accessible to all bots 
@@ -71,6 +72,27 @@ public class BlackBoardWME extends WME {
 	    	}//collision	
 		}
 	
+		return false;
+	}
+	
+	public Boolean isBulletCollision(int id) {
+		//where bot was
+		Point location = (Point)(bots.get(id));
+		//bot size
+		int size = Bot.Size;
+		// when in new spot, is hit by bullet
+		
+		for(Bullet b : GameEngine.getInstance().getBullets()) {
+			if(location.x < b.getX() + 4 &&	//bullet size is 4 - I'll remove this hardcoded thing in a bit
+	    			location.x + size > b.getX()&&
+	    			location.y < b.getY() + 4 &&
+	    			location.y + size > b.getY()) {
+				System.out.print("collide\n" + Integer.toString(id));
+				int targetbulletindex = (GameEngine.getInstance().getBullets()).indexOf(b);
+				GameEngine.getInstance().removeBullet(targetbulletindex);
+	    		return true;
+			}
+		}
 		return false;
 	}
 	

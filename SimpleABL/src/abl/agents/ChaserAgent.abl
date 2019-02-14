@@ -61,7 +61,9 @@ behaving_entity ChaserAgent {
 		subgoal Wait(2000);					// this suspends the execution of the behavior
 		act addBot();
 		with (persistent) subgoal fire();
+		
 	}
+	
 
     /**
      * Fires a bullet at the player character using the bot position at the source and the player position as the target
@@ -112,6 +114,11 @@ behaving_entity ChaserAgent {
 			act setTrajectory(id, playerX, playerY, false);
 		} else {
 			act setTrajectory(id, playerX, playerY, true);
+		}
+		
+		if { (BBWME.isBulletCollision(id)) } {
+			act setColor(id, 50, 50, 50);
+			
 		}
 		
 		subgoal moveTo();

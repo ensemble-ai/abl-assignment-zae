@@ -38,7 +38,7 @@ public class GameEngine extends JPanel implements KeyListener {
 	
 	/** the list of walls */
 	private ArrayList<Wall> walls = new ArrayList<Wall>();
-
+	
 	/** trajectory of the chaser */
 	private Point chaserTrajectory = new Point(0, 0);
 
@@ -337,6 +337,17 @@ public class GameEngine extends JPanel implements KeyListener {
 	 */
 	public ArrayList<Wall> getWalls() {
 		return walls;
+	}
+	
+	/*
+	 * Returns list of all bullets
+	 */
+	public ArrayList<Bullet> getBullets() {
+		return bullets;
+	}
+	
+	public void removeBullet(int targetbullet) {
+		bullets.remove(targetbullet);
 	}
 	
 	/**
