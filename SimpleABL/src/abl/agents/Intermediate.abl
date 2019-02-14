@@ -80,10 +80,7 @@ behaving_entity ChaserAgent {
 	
 		mental_act {
 			countWME.setCount(count + 1); 
-			System.out.println("generated another bot but you can't see it hahahaha");
-			System.out.println(count);
 			c = countWME.getCount();
-			System.out.println(c);
 		}
 		subgoal Wait(2000);
 		act addBot(c, positions);
