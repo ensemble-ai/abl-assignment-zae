@@ -30,6 +30,8 @@ public class BotWME extends WME {
 	
 	private int formPos;
 	
+	private int trust;
+	
 	private Boolean hasFired;
 
 	/** Has this bot moved this round? */
@@ -41,12 +43,13 @@ public class BotWME extends WME {
 	 * Instantiates a working memory element for tracking a bot.
 	 */
 
-	public BotWME(Point location, Point trajectory, int id, Color color, int formPos, Boolean moved, Boolean hasFired) {
+	public BotWME(Point location, Point trajectory, int id, Color color, int formPos, int trust, Boolean moved, Boolean hasFired) {
 		this.location = location;
 		this.trajectory = trajectory;
 		this.id = id;
 		this.color = color;
 		this.formPos = formPos;
+		this.trust = trust;
 		this.hasFired = hasFired;
 		this.moved = moved;
 	}
@@ -127,7 +130,13 @@ public class BotWME extends WME {
 	public void setFormPos(int formPos) {
 		this.formPos = formPos;
 	}
-
+	
+	public int getTrust() {
+		return this.trust;
+	}
+	public void setTrust(int trust) {
+		this.trust = trust;
+	}
 	public Boolean getHasFired() {
 		return hasFired;
 	}
