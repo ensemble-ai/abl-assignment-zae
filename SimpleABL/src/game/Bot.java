@@ -28,6 +28,8 @@ public class Bot {
 	
 	private int size = Size;
 	
+	private int trust; 
+	
 	public Bot() {
 		this.location = new Point(0,0);
 		this.trajectory = new Point(0,0);
@@ -94,6 +96,14 @@ public class Bot {
 
 	public void setFired(boolean fired) {
 		this.fired = fired;
+	}
+	
+	public int getTrust() {
+		return trust;
+	}
+	
+	public void setTrust(int newtrust) {
+		this.trust = newtrust;
 	}
 	
 	
