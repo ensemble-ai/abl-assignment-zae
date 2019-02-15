@@ -7,7 +7,6 @@ import java.awt.Color;
 import java.awt.Point;
 /**
  * Sets color of the chaser. 
- * @author Zee Chen 2-10-2019
  */
 public class SetColor extends BaseAction {
 
