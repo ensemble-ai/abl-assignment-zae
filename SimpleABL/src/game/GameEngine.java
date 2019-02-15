@@ -209,14 +209,33 @@ public class GameEngine extends JPanel implements KeyListener {
 		// spawn player bullets
 		if (spawnBullet) {
 			spawnBullet = false;
-
-			Bullet bullet = new Bullet(playerLocation, chaserLocation, bulletorigin.PLAYER);
+			Point botToShootLocation = PlayerLocationFire();
+			Bullet bullet = new Bullet(playerLocation, botToShootLocation, bulletorigin.PLAYER);
 			if (!bullet.isIdle()) {
 				bullets.add(bullet);
 			}
 		}
 	}
+	public Point PlayerLocationFire() {
 
+		Point botToShoot = null;
+		double playerX, playerY, botX, botY;
+		playerX = this.getPlayerLocation().getX();
+		playerY = this.getPlayerLocation().getY();
+		double short_distance = 10000.0f;
+		for (Bot b : bots) {
+			botX = b.getX();
+			botY = b.getY();
+			double diff_x = (botY - playerY) * (botY - playerY);
+			double diff_y = (botX - playerX) * (botX - playerX);
+			double distance_to_check = Math.sqrt(diff_x + diff_y);
+			if (distance_to_check < short_distance) {
+				short_distance = distance_to_check;
+				botToShoot = b.getLocation();
+			}
+		}
+		return botToShoot;
+	}
 	/**
 	 * Updates the positions of objects in the scene based on their trajectories and the dimensions of the scene.
 	 */
