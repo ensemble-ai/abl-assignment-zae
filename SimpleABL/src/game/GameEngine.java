@@ -272,6 +272,8 @@ public class GameEngine extends JPanel implements KeyListener {
 		if(false == checkWallCollisions(playerX, playerY)) {
 			playerLocation = new Point(playerX, playerY);
 		}
+		
+		checkShotPlayer();
 
 		// update bot locations
 		for(Bot b : this.bots) {
@@ -299,6 +301,25 @@ public class GameEngine extends JPanel implements KeyListener {
     	}//collision
 		return false;
 	}
+	
+	public boolean checkShotPlayer() {
+		//bot size
+		int size = Bot.Size;
+		// when in new spot, is hit by bullet
+		
+		for(Bullet b : GameEngine.getInstance().getBullets()) {
+			if(playerLocation.x < b.getX() + 4 &&	//bullet size is 4 - I'll remove this hardcoded thing in a bit
+	    			playerLocation.x + size > b.getX()&&
+	    			playerLocation.y < b.getY() + 4 &&
+	    			playerLocation.y + size > b.getY()) {
+				int targetbulletindex = (GameEngine.getInstance().getBullets()).indexOf(b);
+				GameEngine.getInstance().removeBullet(targetbulletindex);
+	    		return true;
+			}
+		}
+		return false;
+	}
+
 	
 	/**
 	 * Sets the trajectory of the chaser object.
