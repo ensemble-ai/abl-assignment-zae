@@ -8,6 +8,7 @@ import java.util.Map;
 
 import game.Bot;
 import game.GameEngine;
+import game.GameEngine.bulletorigin;
 import game.Wall;
 import game.Bullet;
 import wm.WME;
@@ -83,7 +84,7 @@ public class BlackBoardWME extends WME {
 		// when in new spot, is hit by bullet
 		
 		for(Bullet b : GameEngine.getInstance().getBullets()) {
-			if(location.x < b.getX() + 4 &&	//bullet size is 4 - I'll remove this hardcoded thing in a bit
+			if(b.origin!=bulletorigin.FACTION1 && location.x < b.getX() + 4 &&	//bullet size is 4 - I'll remove this hardcoded thing in a bit
 	    			location.x + size > b.getX()&&
 	    			location.y < b.getY() + 4 &&
 	    			location.y + size > b.getY()) {

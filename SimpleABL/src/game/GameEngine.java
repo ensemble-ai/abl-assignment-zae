@@ -308,7 +308,7 @@ public class GameEngine extends JPanel implements KeyListener {
 		// when in new spot, is hit by bullet
 		
 		for(Bullet b : GameEngine.getInstance().getBullets()) {
-			if(playerLocation.x < b.getX() + 4 &&	//bullet size is 4 - I'll remove this hardcoded thing in a bit
+			if(b.origin!=bulletorigin.PLAYER && playerLocation.x < b.getX() + 4 &&	//bullet size is 4 - I'll remove this hardcoded thing in a bit
 	    			playerLocation.x + size > b.getX()&&
 	    			playerLocation.y < b.getY() + 4 &&
 	    			playerLocation.y + size > b.getY()) {
