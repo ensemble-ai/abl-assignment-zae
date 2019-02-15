@@ -78,13 +78,12 @@ behaving_entity ChaserAgent {
 			(BotWME id::id hasFired==false)
 		}
 		specificity 2;
-		
 		//act fire(botX, botY, playerX, playerY);	
 		act fire(playerX, playerY, id);
 		subgoal Wait(500);
 		subgoal fire();
 	}
-	
+
 	sequential behavior fire() {
 		specificity 1;
 	
