@@ -74,12 +74,14 @@ behaving_entity ChaserAgent {
 		precondition {
 			(PlayerWME locationX::playerX locationY::playerY)	// locationX invokes PlayerMWE.getLocationX() 
 			//(BotWME locationX::botX locationY::botY)   // :: is used to bind properties to behavior scoped variables
-			(BotWME id::id fired==false)
+			(BotWME id::id hasFired==false)
 		}
 		specificity 2;
 		
 		//act fire(botX, botY, playerX, playerY);	
 		act fire(playerX, playerY, id);
+		subgoal Wait(500);
+		subgoal fire();
 	}
 	
 	sequential behavior fire() {
