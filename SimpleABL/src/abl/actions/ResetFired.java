@@ -1,3 +1,4 @@
+
 package abl.actions;
 
 import game.Bot;
@@ -21,3 +22,4 @@ public class ResetFired extends BaseAction {
 		}
 	}
 }
+

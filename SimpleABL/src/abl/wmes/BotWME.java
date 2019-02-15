@@ -3,6 +3,7 @@ package abl.wmes;
 import java.awt.Color;
 import java.awt.Point;
 
+import game.GameEngine;
 import wm.WME;
 /**
  * Stores information about the bot.
@@ -18,6 +19,9 @@ public class BotWME extends WME {
 	/** Trajectory of the bot */
 	private Point trajectory;
 	
+	/** Target destination of the bot */
+	private Point destination;
+	
 	/** ID of the bot */
 	private int id;
 	
@@ -27,19 +31,50 @@ public class BotWME extends WME {
 	private int formPos;
 	
 	private Boolean hasFired;
+
+	/** Has this bot moved this round? */
+	private Boolean moved;
+	
 	
 	
 	/**
 	 * Instantiates a working memory element for tracking a bot.
 	 */
-	public BotWME(Point location, Point trajectory, int id, Color color, int formPos, Boolean hasFired) {
+
+	public BotWME(Point location, Point trajectory, int id, Color color, int formPos, Boolean moved, Boolean hasFired) {
 		this.location = location;
 		this.trajectory = trajectory;
 		this.id = id;
 		this.color = color;
 		this.formPos = formPos;
 		this.hasFired = hasFired;
+		this.moved = moved;
 	}
+
+	public boolean check() {
+		return true;
+	}
+
+	public Point calcTrajectory(int targetX, int targetY) { 
+		Point point = location; 
+		int dirx = 0;
+		int diry = 0;
+		int speed = GameEngine.BotSpeed;
+		
+		if(point.getX() - targetX > speed) {	
+			dirx = -speed;
+		}else if(point.getX() - targetX < -speed) {
+			dirx = speed;			
+		}
+		if(point.getY() - targetY  > speed) {	
+			diry = -speed;
+		}else if(point.getY() - targetY < -speed) {
+			diry = speed;			
+		}
+		
+		return new Point(dirx, diry);
+	}
+	
 	
 	/**
 	 * Returns the x location of the bot. 
@@ -76,7 +111,7 @@ public class BotWME extends WME {
 	public void setId(int id) {
 		this.id = id;
 	}
-	
+
 	public Color getColor() {
 		return color;
 	}
@@ -100,5 +135,14 @@ public class BotWME extends WME {
 	public void setHasFired(Boolean hasFired) {
 		this.hasFired = hasFired;
 	}
+
+	public Boolean getMoved() {
+		return moved;
+	}
 	
+	public void setMoved(Boolean moved) {
+		this.moved = moved;
+	}
+
+
 }

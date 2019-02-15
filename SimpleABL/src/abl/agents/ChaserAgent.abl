@@ -4,13 +4,13 @@ package abl.generated;
 import abl.wmes.*;
 import abl.actions.*;
 import abl.sensors.*;
+import java.awt.Point;
 // Imports are used the same way as in Java. Its necessary to import Sensor, Action, and WME classes.
 /** 
  * A simple agent that moves towards the player and occassionally fires bullets.
  *
  * @author Josh McCoy 1-23-2019
  * @author Ben Weber 3-7-11
- * @author Zee chen 2-13-2019
  */ 
 behaving_entity ChaserAgent {
 // This defines a name for the agent 
@@ -26,12 +26,14 @@ behaving_entity ChaserAgent {
 	register act moveDown(int) with MoveDown; 
 	register act moveLeft(int) with MoveLeft;
 	register act moveRight(int) with MoveRight;
+	register act moveTo(int, int, int, int) with MoveTo;
+	register act setTrajectory(int, int, int, boolean) with SetTrajectory;
+	register act moveAway(int, int, int, int) with MoveAway;
 	register act stop(int) with Stop;
-	register act fire(int, int, int, int) with Fire;
-	register act moveTo(int, int, int) with MoveTo;
+	register act addBot() with AddBot;
+	register act fire(int, int, int) with Fire;
 	register act setColor(int, int, int, int) with SetColor;
-	register act addBot(int, int) with AddBot;
-	register act hasFired(int, boolean) with HasFired;
+	register act resetMoves() with ResetMoves;
 	register act resetFired() with ResetFired;
 
 	/**
@@ -40,7 +42,7 @@ behaving_entity ChaserAgent {
 	 */
     register wme PlayerWME with PlayerSensor;
     register wme BotWME with BotSensor;
-    //register wme FormationWME with FormationSensor;
+    register wme BlackBoardWME with BlackBoardSensor;
 
 	/**
 	 * Defines a variable scope to the agent, which can be used and modified in behaviors. 
@@ -48,73 +50,41 @@ behaving_entity ChaserAgent {
 	 * It is also possible to use constants from a Java interface (e.g.):
      * constants game.Constants;   
 	 */ 
-	int botSpeed = 2;	
-	int distance = 40;
-	
-	wme BotCountWME {
-		int count;
-	}
-	
-	int MAX_Bots = 3;		// additional number of bots
-	int positions = 4;		// formation positions
+	int botSpeed = 2;
+	int distance = 15;
+	int playerDistance = 30;
 
 	/**
 	 * After an initial delay, continuously fire bullets. 
 	 */
 	sequential behavior manageFiring() {
 		subgoal Wait(2000);					// this suspends the execution of the behavior
+		act addBot();
 		with (persistent) subgoal fire();
-	}
-	
-	/**
-	 * After an initial delay, continuously generate bots. 
-	 */
-	
-	sequential behavior addBots() {
-		precondition {
-			(BotWME id::id)
-			countWME = (BotCountWME count < MAX_Bots count::count)
-		}
 		
-		int c;
-	
-		mental_act {
-			countWME.setCount(count + 1); 
-			System.out.println("generated another bot but you can't see it hahahaha");
-			System.out.println(count);
-			c = countWME.getCount();
-			System.out.println(c);
-		}
-		subgoal Wait(2000);
-		act addBot(c, positions);
-		subgoal addBots();
 	}
+	
 
     /**
      * Fires a bullet at the player character using the bot position at the source and the player position as the target
      *
      * Each fire action is followed by a cooldown period. 
      */
-	
 	sequential behavior fire() {
 		precondition {
 			(PlayerWME locationX::playerX locationY::playerY)	// locationX invokes PlayerMWE.getLocationX() 
-			(BotWME locationX::botX locationY::botY id::id hasFired == false)   // :: is used to bind properties to behavior scoped variables
+			//(BotWME locationX::botX locationY::botY)   // :: is used to bind properties to behavior scoped variables
+			(BotWME id::id fired==false)
 		}
+		specificity 2;
 		
-		specificity 3;
-		
-		
-		act hasFired(id, true);
-		act setColor(0, 24, 144, id);
-		act fire(botX, botY, playerX, playerY);	
-		subgoal Wait(100);
+		//act fire(botX, botY, playerX, playerY);	
+		act fire(playerX, playerY, id);
 	}
 	
 	sequential behavior fire() {
-		
 		specificity 1;
-		
+	
 		act resetFired();
 		subgoal Wait(500);
 		
@@ -125,105 +95,117 @@ behaving_entity ChaserAgent {
 	 * Continuously move towards the player character.
 	 */
 	sequential behavior manageMovement() {
-		with (persistent) subgoal moveTo();
-		//spawngoal moveTo();
-	}
-	
-	sequential behavior moveTo() {
-		precondition {
-			(PlayerWME locationX::playerX locationY::playerY)
-			botWME = (BotWME id::id formPos==0)			
-		}
-		
-		specificity 3;
-		
-		int x, y;
-		
-		mental_act {
-			// calculate position to move to
-			x = playerX - distance;
-			y = playerY + distance;
-		}
- 
-		act moveTo(x, y, id);
-		subgoal moveTo();
-	}
-	
-	sequential behavior moveTo() {
-		precondition {
-			(PlayerWME locationX::playerX locationY::playerY)
-			botWME = (BotWME id::id formPos==1)
-			// condition
-			
-		}
-		
-		specificity 3;
-		
-		int x, y;
-		
-		mental_act {
-			// calculate position to move to
-			x = playerX + distance;
-			y = playerY + distance;
-		}
- 
-		act moveTo(x, y, id);
-		subgoal moveTo();
-	}
-	
-	sequential behavior moveTo() {
-		precondition {
-			(PlayerWME locationX::playerX locationY::playerY)
-			botWME = (BotWME id::id formPos==2)
-			// condition
-			
-		}
-		
-		specificity 3;
-		
-		int x, y;
-		
-		mental_act {
-			// calculate position to move to
-			x = playerX + distance;
-			y = playerY - distance;
-		}
- 
-		act moveTo(x, y, id);
-		subgoal moveTo();
-	}
-	
-	sequential behavior moveTo() {
-		precondition {
-			(PlayerWME locationX::playerX locationY::playerY)
-			botWME = (BotWME id::id formPos==3)
-			// condition
-			
-		}
-		
-		specificity 3;
-		
-		int x, y;
-		
-		mental_act {
-			// calculate position to move to
-			x = playerX - distance;
-			y = playerY - distance;
-		}
- 
-		act moveTo(x, y, id);
 		subgoal moveTo();
 	}
 
 
 	/**
+	 * Makes all bots move towards the player's current location
+	 */
+	sequential behavior moveTo() {
+		precondition { 
+			(PlayerWME locationX::playerX locationY::playerY)
+			bWME = (BotWME id::id moved==false)
+			BBWME = (BlackBoardWME)
+		}
+		specificity 3;
+	
+		if { (false==BBWME.isBotCollision(id, distance, playerDistance)) } {
+			act setTrajectory(id, playerX, playerY, false);
+		} else {
+			act setTrajectory(id, playerX, playerY, true);
+		}
+		
+		if { (BBWME.isBulletCollision(id)) } {
+			act setColor(id, 50, 50, 50);
+			
+		}
+		
+		subgoal moveTo();
+	}
+	
+	
+	/**
+	 * Makes all bots move towards the player's current location
+	 * Will only drop into this instance of MoveTo after all bots have
+	 * gotten a chance to move. So, we reset the variable that marks whether
+	 * they have taken their "turn"
+	 */
+	sequential behavior moveTo() {
+		specificity 1;
+		act resetMoves();
+		succeed_step;
+	}	
+		
+	
+	/**
+	 * Moves the bot up if the player is above the bot.
+	 * 
+	 * Note: The agent prefers vertical over horizonal movement, because the move up and move down behaviors have 
+	 * a higher specificity than the other move behaviors. Therefore, if the agent needs to be moved up or down,
+	 * they are chosen first. 
+	 */ 
+	sequential behavior move() {
+		precondition {
+			(PlayerWME locationY::playerY)
+			(BotWME locationY::botY id::id) 
+			(botY > (playerY + botSpeed))
+		}
+		specificity 3;
+ 
+		act moveUp(id);
+	}
+ 	
+	/**
+	 * Moves the bot down if the player is below the bot.
+	 */
+	sequential behavior move() {
+		precondition {
+			(PlayerWME locationY::playerY)
+			(BotWME locationY::botY id::id) 
+			(botY < (playerY - botSpeed))
+		}
+		specificity 3;
+
+		act moveDown(id);
+	}
+ 	 
+	/**
+	 * Moves the bot left if the player to the left of the bot.
+	 */
+	sequential behavior move() {
+		precondition {
+			(PlayerWME locationX::playerX)
+			(BotWME locationX::botX id::id) 
+			(botX > (playerX + botSpeed))
+		}
+		specificity 2;
+
+		act moveLeft(id);
+	}
+
+	/**
+	 * Moves the bot right if the player to the right of the bot.
+	 */
+	sequential behavior move() {
+		precondition { 
+			(PlayerWME locationX::playerX)
+			(BotWME locationX::botX id::id) 
+			(botX < (playerX - botSpeed))
+		}
+		specificity 2;
+
+		act moveRight(id);
+	}
+	
+	/**
 	 * Stops the bot.
 	 *
 	 * Of the move behaviors, this is always evaluated last due to having the lowest specificity. 
-	 * Since it is evaluated last, it is only reached if none of the other behaviors can be activated,
+	 * Since it is evaluated last, it is only reached if none of the other behaviors can be activited,
 	 * which means the player and bot are overlapping. This is why there are no preconditions. 
 	 */
-	sequential behavior moveTo() {
+	sequential behavior move() {
 		precondition {
 			(BotWME id::id)
 		}
@@ -256,13 +238,11 @@ behaving_entity ChaserAgent {
      */
     initial_tree {
     	with (priority 3) mental_act {
-    		BotCountWME countWME = new BotCountWME();
-    		countWME.setCount(0);
-    		BehavingEntity.getBehavingEntity().addWME(countWME);
 			System.out.println("Starting bot Agent");
     	}
-     	with (priority 2) subgoal addBots();
-    	with (priority 2) subgoal manageFiring();
-    	with (priority 1) subgoal manageMovement();
+     	
+    	//with (priority 2) subgoal manageFiring();
+    	//with (priority 1) subgoal manageMovement();
+    	with (priority 1, persistent) subgoal manageMovement();
     }
 }

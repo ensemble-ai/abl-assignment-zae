@@ -1,6 +1,8 @@
 package game;
 
 import java.awt.Point;
+
+import game.GameEngine.bulletorigin;
 /**
  * Records the location and trajectory of a bullet.
  * 
@@ -22,12 +24,16 @@ public class Bullet {
 	/** bullet speed */
 	public static final double BulletSpeed = 10.0;
 	
+	// who's the bullet from? 
+	public bulletorigin origin;
+	
 	/**
 	 * Creates a bullet that will move towards the target location. 
 	 */
-	public Bullet(Point source, Point target) {
+	public Bullet(Point source, Point target, bulletorigin origin) {
 		x = source.x;
 		y = source.y;
+		this.origin = origin;
 		
 		dx = target.x - source.x;
 		dy = target.y - source.y;
@@ -69,5 +75,13 @@ public class Bullet {
 	 */
 	public int getY() {
 		return (int)y;
+	}
+	
+	public int getdX() {
+		return (int)dx;
+	}
+	
+	public int getdY() {
+		return (int)dy;
 	}
 }

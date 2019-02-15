@@ -1,20 +1,27 @@
 package abl.actions;
 
+import game.Bot;
 import game.GameEngine;
 
+import java.awt.Point;
 /**
- * Adds a bot to the game engine
+ * Creates a new bot
+ * 
+ * @author Ben Weber 3-7-11
  */
 public class AddBot extends BaseAction {
 
 	/**
-	 * Add bots.
-	 * args[0] - count of bots
-	 * args[1] - max number of bots produced
+	 * Args:
+	 *
 	 */
 	public void execute(Object[] args) {
-		int modArg = (Integer)args[0] % (Integer)args[1];
-		GameEngine.getInstance().addBots(modArg);
+		Bot b = new Bot();
+		Point dimensions = GameEngine.getInstance().getDimensions();
 		
+		//TODO set location? - do we want this to be passed in? generated randomly?
+		b.setLocation(new Point(dimensions.x/3, dimensions.y/3));
+		
+		GameEngine.getInstance().getBots().add(b);
 	}
 }

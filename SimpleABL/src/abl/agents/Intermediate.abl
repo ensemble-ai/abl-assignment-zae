@@ -27,11 +27,10 @@ behaving_entity ChaserAgent {
 	register act moveLeft(int) with MoveLeft;
 	register act moveRight(int) with MoveRight;
 	register act stop(int) with Stop;
-	register act fire(int, int, int, int) with Fire;
+	register act fire(int, int, int) with Fire;
 	register act moveTo(int, int, int) with MoveTo;
 	register act setColor(int, int, int, int) with SetColor;
-	register act addBot(int, int) with AddBot;
-	register act hasFired(int, boolean) with HasFired;
+	register act addBot(int, int) with AddBotInt;
 	register act resetFired() with ResetFired;
 
 	/**
@@ -102,9 +101,8 @@ behaving_entity ChaserAgent {
 		specificity 3;
 		
 		
-		act hasFired(id, true);
 		act setColor(0, 24, 144, id);
-		act fire(botX, botY, playerX, playerY);	
+		act fire(playerX, playerY, id);	
 		subgoal Wait(100);
 	}
 	
