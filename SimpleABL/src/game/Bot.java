@@ -119,29 +119,30 @@ public class Bot {
 	
 	public void setTrust(int newtrust) {
 		this.trust = newtrust;
-		getNewColor(newtrust);
+		setNewColor(newtrust);
 	}
 	
-	public Color getNewColor(int trustvalue) {
+	public void setNewColor(int trustvalue) {
+		int basered = basecolor.getRed();
+		int basegreen = basecolor.getGreen();
+		int baseblue = basecolor.getBlue();
 		if(trustvalue > 0) {
 			// trust
-			int degree = (100 - trustvalue)/100;
-			int red = 0 + basecolor.getRed()*degree;
-			int green = 255 - basecolor.getGreen()*degree;
-			int blue = 0 + basecolor.getBlue()*degree;
+			float degree = 1- (float)(100 - trustvalue)/100;
+			int red =  Math.round((0 - basered)*degree + basered);
+			int green = Math.round((255 - basegreen)*degree + basegreen);
+			int blue = Math.round((0 - baseblue)*degree + baseblue);
 			this.setColor(new Color(red, green, blue));
 		} else if (trustvalue < 0) {
 			//distrust
-			int degree = (100 - (trustvalue*-1))/100;
-			int red = 255 - basecolor.getRed()*degree;
-			int green = 0 + basecolor.getGreen()*degree;
-			int blue = 0 + basecolor.getBlue()*degree;
+			float degree = 1- (float)(100 + trustvalue)/100;
+			int red =  Math.round((255 - basered)*degree + basered);
+			int green = Math.round((0 - basegreen)*degree + basegreen);
+			int blue = Math.round((0 - baseblue)*degree + baseblue);
 			this.setColor(new Color(red, green, blue));
-			
 		} else {
 			this.setColor(basecolor);
 		}
-		return new Color(50,50,50);
 	}
 	
 }
