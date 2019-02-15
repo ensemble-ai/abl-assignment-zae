@@ -98,33 +98,51 @@ behaving_entity ChaserAgent {
 	 */
 	sequential behavior manageMovement() {
 		subgoal moveTo();
+		subgoal changeTrust();
 	}
 
 
 	/**
 	 * Makes all bots move towards the player's current location
 	 */
-	sequential behavior moveTo() {
+	sequential behavior moveTo() { /* no bot collison */
 		precondition { 
 			(PlayerWME locationX::playerX locationY::playerY)
+			(false==BBWME.isBotCollision(id, distance, playerDistance))
 			bWME = (BotWME id::id moved==false)
 			BBWME = (BlackBoardWME)
 		}
 		specificity 3;
 	
-		if { (false==BBWME.isBotCollision(id, distance, playerDistance)) } {
-			act setTrajectory(id, playerX, playerY, false);
-		} else {
-			act setTrajectory(id, playerX, playerY, true);
-		}
-		
-		if { (BBWME.isBulletCollision(id)) } {
-			act changeTrust(id, -10);
-			act setColor(id, 50, 50, 50);
-			
-		}
+		act setTrajectory(id, playerX, playerY, false);
 		
 		subgoal moveTo();
+	}
+	
+	sequential behavior moveTo() {
+		precondition {  /* bot collision */
+			(PlayerWME locationX::playerX locationY::playerY)
+			(BBWME.isBotCollision(id, distance, playerDistance))
+			bWME = (BotWME id::id moved==false)
+			BBWME = (BlackBoardWME)
+		}
+		specificity 3;
+
+		act setTrajectory(id, playerX, playerY, true);
+		
+		subgoal moveTo();
+	}
+	
+	sequential behavior changeTrust() {
+		precondition { 
+			bWME = (BotWME id::id moved==false)
+			BBWME = (BlackBoardWME)
+			(BBWME.isBulletCollision(id))
+		}
+		specificity 3;
+
+		
+		act changeTrust(id, -10);
 	}
 	
 	
