@@ -32,6 +32,7 @@ behaving_entity ChaserAgent {
 	register act stop(int) with Stop;
 	register act addBot() with AddBot;
 	register act fire(int, int, int) with Fire;
+	register act changeTrust(int, int) with ChangeTrust;
 	register act setColor(int, int, int, int) with SetColor;
 	register act resetMoves() with ResetMoves;
 	register act resetFired() with ResetFired;
@@ -117,6 +118,7 @@ behaving_entity ChaserAgent {
 		}
 		
 		if { (BBWME.isBulletCollision(id)) } {
+			act changeTrust(id, -10);
 			act setColor(id, 50, 50, 50);
 			
 		}
