@@ -19,7 +19,10 @@ public class BotSensor extends SerialSensor {
 		BehavingEntity.getBehavingEntity().deleteAllWMEClass("BotWME");
 		for(Bot b : GameEngine.getInstance().getBots()) {
 			BehavingEntity.getBehavingEntity().addWME(
-					new BotWME(b.getLocation(), b.getTrajectory(), b.getId(), b.getColor(), b.getFormPos(), b.getTrust(), b.isMoved(), b.firedCheck()));
+					new BotWME(b.getLocation(), b.getTrajectory(), 
+							   b.getId(), b.getColor(), b.getFormPos(), 
+							   b.getTrust(), b.isMoved(), b.firedCheck(), 
+							   b.isTrustUpdated(), b.isShot()));
 		}
 		
 	}

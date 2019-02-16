@@ -18,8 +18,14 @@ public class Bot {
 	/** Trajectory of the bot */
 	private Point potentialTrajectory;
 	
+	/** Indicates whether this bot has been shot */
+	private boolean shot;
+	
 	/** Has the bot moved this round? */
 	private boolean moved;
+	
+	/** Has the bot updated its trust level this round? */
+	private boolean trustUpdated;
 	
 	/** unique bot ID */
 	private int id;
@@ -43,7 +49,7 @@ public class Bot {
 		this.basecolor = new Color(255,165,0);
 		this.color = new Color(255,165,0);
 		this.hasFired = false;
-		
+		this.trustUpdated = false;
 	}
 
 	public Point getLocation() {
@@ -115,6 +121,15 @@ public class Bot {
 	public void setMoved(Boolean moved) {
 		this.moved = moved;
 	}
+	
+	/*
+	 * public Boolean shouldTrustChange() {
+		return shouldTrustChange;
+	}
+	public void setTrustChange(Boolean shouldTrustChange) {
+		this.shouldTrustChange = shouldTrustChange;
+	}
+	*/
 
 	public int getTrust() {
 		return trust;
@@ -155,5 +170,48 @@ public class Bot {
 	public void setPotentialTrajectory(Point potentialTrajectory) {
 		this.potentialTrajectory = potentialTrajectory;
 	}
+	/**
+	 * @return the shouldTrustChange
+	 */
+	/*public boolean isShouldTrustChange() {
+		return shouldTrustChange;
+	}
+*/
+	/**
+	 * @param shouldTrustChange the shouldTrustChange to set
+	 */
+	/*public void setShouldTrustChange(boolean shouldTrustChange) {
+		this.shouldTrustChange = shouldTrustChange;
+	}
+	*/
 	
+
+	/**
+	 * @return the shot
+	 */
+	public boolean isShot() {
+		return shot;
+	}
+
+	/**
+	 * @param shot the shot to set
+	 */
+	public void setShot(boolean shot) {
+		this.shot = shot;
+	}
+
+	/**
+	 * @return the trustUpdated
+	 */
+	public boolean isTrustUpdated() {
+		return trustUpdated;
+	}
+
+	/**
+	 * @param trustUpdated the trustUpdated to set
+	 */
+	public void setTrustUpdated(boolean trustUpdated) {
+		this.trustUpdated = trustUpdated;
+	}
+
 }

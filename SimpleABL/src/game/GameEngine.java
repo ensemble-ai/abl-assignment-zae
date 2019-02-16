@@ -215,6 +215,7 @@ public class GameEngine extends JPanel implements KeyListener {
 				bullets.add(bullet);
 			}
 		}
+
 	}
 	public Point PlayerLocationFire() {
 
@@ -274,6 +275,7 @@ public class GameEngine extends JPanel implements KeyListener {
 		}
 		
 		checkShotPlayer();
+		checkShotBots();
 
 		// update bot locations
 		for(Bot b : this.bots) {
@@ -290,6 +292,9 @@ public class GameEngine extends JPanel implements KeyListener {
 	}
 
 	
+	/**
+	 * check for collisions between player and wall 
+	 */
 	private boolean checkWallCollisions(int x, int y) {
 		for(Wall w : GameEngine.getInstance().getWalls()) {
 		    if(x < w.getX() + w.getWidth() &&
@@ -302,6 +307,9 @@ public class GameEngine extends JPanel implements KeyListener {
 		return false;
 	}
 	
+	/**
+	 * check for collisions between bullets and player 
+	 */
 	public boolean checkShotPlayer() {
 		//bot size
 		int size = Bot.Size;
@@ -319,6 +327,32 @@ public class GameEngine extends JPanel implements KeyListener {
 		}
 		return false;
 	}
+	
+
+	/**
+	 * check for collisions between bullets and bots. 
+	 * notify bot if they have been shot by a player.
+	 */
+	public void checkShotBots() {
+		//bot size
+		int size = Bot.Size;
+		// when in new spot, is hit by bullet
+		
+		for(Bullet b :new ArrayList<>(bullets)) {
+			for(Bot bot : bots) {
+				if(b.origin==bulletorigin.PLAYER && 
+						bot.getX() < b.getX() + 4 &&	//bullet size is 4 - I'll remove this hardcoded thing in a bit
+						bot.getX() + size > b.getX()&&
+						bot.getY() < b.getY() + 4 &&
+						bot.getY() + size > b.getY()) {
+					int targetbulletindex = bullets.indexOf(b);
+					removeBullet(targetbulletindex);
+					bot.setShot(true);
+				}
+			}
+		}
+	}
+	
 
 	
 	/**

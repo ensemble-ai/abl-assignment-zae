@@ -37,6 +37,7 @@ behaving_entity ChaserAgent {
 	register act resetMoves() with ResetMoves;
 	register act resetFired() with ResetFired;
 	register act resetOtherTrajectories(int) with ResetOtherTrajectories;
+	register act resetTrustUpdated() with ResetTrustUpdated;
 
 	/**
 	 * Define the sensors that add game state to working memory. Each sensor defines the name of the WME class
@@ -55,7 +56,47 @@ behaving_entity ChaserAgent {
 	int botSpeed = 2;
 	int distance = 15;
 	int playerDistance = 30;
+	int trustDecrease = -5;
+	int trustIncrease = 2;
 
+	/**
+	 * Keep track of updates to trust 
+	 */
+	sequential behavior manageTrust() {
+		subgoal Wait(500);
+		subgoal changeTrust();
+	}
+
+	/**
+	 * Decrease trust when player has been shot
+	 */
+	sequential behavior changeTrust() {
+		precondition { 
+			bWME = (BotWME id::id shot==true trustUpdated==false)
+		}
+		specificity 5;
+		act changeTrust(id, trustDecrease);
+		subgoal changeTrust();
+	}
+	
+	/**
+	 * Increase trust by small amout if not being shot at 
+	 */
+	sequential behavior changeTrust() {
+		precondition { 
+			bWME = (BotWME id::id shot==false trustUpdated==false)
+		}
+		specificity 4;
+		act changeTrust(id, trustIncrease);
+		subgoal changeTrust();
+	}
+	
+	sequential behavior changeTrust() {
+		specificity 1;
+		act resetTrustUpdated();
+		succeed_step;	
+	}
+	
 	/**
 	 * After an initial delay, continuously fire bullets. 
 	 */
@@ -63,10 +104,8 @@ behaving_entity ChaserAgent {
 		subgoal Wait(2000);					// this suspends the execution of the behavior
 		act addBot();
 		with (persistent) subgoal fire();
-		
 	}
 	
-
     /**
      * Fires a bullet at the player character using the bot position at the source and the player position as the target
      *
@@ -99,9 +138,7 @@ behaving_entity ChaserAgent {
 	 */
 	sequential behavior manageMovement() {
 		subgoal moveTo();
-		subgoal changeTrust();
 	}
-
 
 	/**
 	 * Makes all bots move towards the player's current location
@@ -119,12 +156,6 @@ behaving_entity ChaserAgent {
 		}
 		specificity 10;
 		
-		/*
-		 * 
-			System.out.println("first moveto");
-		}
-		*/
-		
 		act setTrajectory(id, x, y);
 		
 		subgoal moveTo();
@@ -139,7 +170,6 @@ behaving_entity ChaserAgent {
 			bWME = (BotWME locationY::botY id::id moved==false) 
 			(botY > (playerY + botSpeed))
 			BBWME = (BlackBoardWME)
-			//(true==bWME.setPotentialTrajectory(0,-botSpeed))
 			(false==BBWME.isBotCollision(id, distance, playerDistance, 0, -botSpeed))
 		}
 		specificity 4;
@@ -198,7 +228,6 @@ behaving_entity ChaserAgent {
 		}
 		specificity 4;
 	
-		
 		act setTrajectory(id, botSpeed, 0);
 		subgoal moveTo();
 	}
@@ -212,8 +241,6 @@ behaving_entity ChaserAgent {
 			BBWME = (BlackBoardWME)
 			(true==BBWME.isPermanentBotCollision(id, distance))
 			(BotWME id==id potentialX::x potentialY::y)
-			//(PlayerWME locationX::playerX locationY::playerY)
-			//(true==bWME.calcPotentialTrajectory(playerX, playerY))	
 		}
 		specificity 3;
 	
@@ -237,7 +264,6 @@ behaving_entity ChaserAgent {
 	sequential behavior moveTo() {
 		precondition { 
 			bWME = (BotWME id::id moved==false)
-			//(true==bWME.setPotentialTrajectory(0,0))
 		}
 		specificity 2;
 		
@@ -370,12 +396,12 @@ behaving_entity ChaserAgent {
      * Note: priorities are used to ensure all goals are pursued, since the move() goal can thrash in this simple example
      */
     initial_tree {
-    	with (priority 3) mental_act {
+    	with (priority 4) mental_act {
 			System.out.println("Starting bot Agent");
     	}
      	
-    	with (priority 2) subgoal manageFiring();
-    	//with (priority 1) subgoal manageMovement();
+    	with (priority 3) subgoal manageFiring();
+    	with (priority 2, persistent) subgoal manageTrust();
     	with (priority 1, persistent) subgoal manageMovement();
     }
 }

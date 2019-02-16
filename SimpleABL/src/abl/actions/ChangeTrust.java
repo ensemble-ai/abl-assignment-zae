@@ -12,26 +12,30 @@ public class ChangeTrust extends BaseAction {
 	 * Args:
 	 *  - 0: bot id
 	 *  - 1: amount to change trust
+	 *  - 2: Trust threshold that is needed to activate
 	 */
 	public void execute(Object[] args) {
-		int trust;
 		int bot_ID = (Integer)args[0];
-		Bot bot = null;
-		
 		for(Bot b:GameEngine.getInstance().getBots()) {
+
 			if(b.getId() == bot_ID) {
-				bot = b;
+				changeTrust(b, (Integer)args[1]);
+				b.setTrustUpdated(true);
 			}
 		}
+
+	}
+	public void changeTrust(Bot bot, int trust_mod) {
+		int trust;
 		trust = bot.getTrust();
-		trust += (Integer)args[1];
+		trust += trust_mod;
 		if (trust < -100) {
 			trust = -100;
 		}
 		if (trust > 100) {
 			trust = 100;
 		}
-		System.out.println(trust);
+		//System.out.println(trust);
 		bot.setTrust(trust);
 	}
 }
