@@ -108,9 +108,9 @@ behaving_entity ChaserAgent {
 	sequential behavior moveTo() { /* no bot collison */
 		precondition { 
 			(PlayerWME locationX::playerX locationY::playerY)
-			(false==BBWME.isBotCollision(id, distance, playerDistance))
 			bWME = (BotWME id::id moved==false)
 			BBWME = (BlackBoardWME)
+			(false==BBWME.isBotCollision(id, distance, playerDistance))
 		}
 		specificity 3;
 	
@@ -122,9 +122,9 @@ behaving_entity ChaserAgent {
 	sequential behavior moveTo() {
 		precondition {  /* bot collision */
 			(PlayerWME locationX::playerX locationY::playerY)
-			(BBWME.isBotCollision(id, distance, playerDistance))
 			bWME = (BotWME id::id moved==false)
 			BBWME = (BlackBoardWME)
+			(BBWME.isBotCollision(id, distance, playerDistance))
 		}
 		specificity 3;
 
