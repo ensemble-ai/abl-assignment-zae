@@ -13,7 +13,10 @@ public class Bot {
 	private Point location;
 	
 	/** Trajectory of the bot */
-	private Point trajectory;
+	private Point trajectory;	
+	
+	/** Trajectory of the bot */
+	private Point potentialTrajectory;
 	
 	/** Indicates whether this bot has been shot */
 	private boolean shot;
@@ -160,6 +163,13 @@ public class Bot {
 		}
 	}
 
+	public Point getPotentialTrajectory() {
+		return this.potentialTrajectory;
+	}
+
+	public void setPotentialTrajectory(Point potentialTrajectory) {
+		this.potentialTrajectory = potentialTrajectory;
+	}
 	/**
 	 * @return the shouldTrustChange
 	 */
@@ -204,5 +214,4 @@ public class Bot {
 		this.trustUpdated = trustUpdated;
 	}
 
-	
 }

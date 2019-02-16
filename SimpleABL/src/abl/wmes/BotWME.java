@@ -3,6 +3,7 @@ package abl.wmes;
 import java.awt.Color;
 import java.awt.Point;
 
+import game.Bot;
 import game.GameEngine;
 import wm.WME;
 /**
@@ -18,6 +19,10 @@ public class BotWME extends WME {
 	
 	/** Trajectory of the bot */
 	private Point trajectory;
+	
+	/** possible rajectory of the bot */
+	private int potentialX;
+	private int potentialY;
 	
 	/** Target destination of the bot */
 	private Point destination;
@@ -59,6 +64,8 @@ public class BotWME extends WME {
 		this.trust = trust;
 		this.hasFired = hasFired;
 		this.moved = moved;
+		this.potentialX = 0;
+		this.potentialY = 0;
 		this.shot = shot;
 		this.trustUpdated = trustUpdated;
 	}
@@ -67,6 +74,7 @@ public class BotWME extends WME {
 		return true;
 	}
 
+	/*
 	public Point calcTrajectory(int targetX, int targetY) { 
 		Point point = location; 
 		int dirx = 0;
@@ -85,6 +93,54 @@ public class BotWME extends WME {
 		}
 		
 		return new Point(dirx, diry);
+	}
+	*/
+	
+	public boolean setPotentialTrajectory(int dirx, int diry) {
+		for(Bot b:GameEngine.getInstance().getBots()) {
+			if(b.getId() == id) {
+				b.setPotentialTrajectory(new Point(dirx, diry));
+				return true;
+			}
+		}
+		
+		System.out.println("HELP! I can't find that bot!");
+		return false;
+	}
+		
+	public boolean calcPotentialTrajectory(int targetX, int targetY) {
+		final double sqrt2 = 1.41421356237;
+		int dirx = 0;
+		int diry = 0;
+		int x = (int)location.getX();
+		int y = (int)location.getY();
+		
+		int speed = GameEngine.BotSpeed;
+		
+		//System.out.println("Calculating trajectory!");
+		
+		if(x - targetX > speed) {	
+			dirx = -speed;
+		}else if(x - targetX < -speed) {
+			dirx = speed;			
+		}
+		if(y - targetY  > speed) {	
+			diry = -speed;
+		}else if(y - targetY < -speed) {
+			diry = speed;			
+		}
+
+		
+		if(dirx != 0 && diry != 0) { 
+			//TODO: check, how do ints get truncated when negative?
+			dirx = (int)((double)dirx * sqrt2); 
+			diry = (int)((double)diry * sqrt2); 
+		}//bot is heading diagonal, so mod the speed
+		
+	
+		potentialX = dirx;
+		potentialY = diry;
+		return setPotentialTrajectory(dirx, diry);
 	}
 	
 	
@@ -163,6 +219,34 @@ public class BotWME extends WME {
 	}
 
 	/**
+	 * @return the potentialX
+	 */
+	public int getPotentialX() {
+		return potentialX;
+	}
+
+	/**
+	 * @param potentialX the potentialX to set
+	 */
+	public void setPotentialX(int potentialX) {
+		this.potentialX = potentialX;
+	}
+
+	/**
+	 * @return the potentialY
+	 */
+	public int getPotentialY() {
+		return potentialY;
+	}
+
+	/**
+	 * @param potentialY the potentialY to set
+	 */
+	public void setPotentialY(int potentialY) {
+		this.potentialY = potentialY;
+	}
+	
+	/**
 	 * @return the trustUpdated
 	 */
 	public Boolean getTrustUpdated() {
@@ -190,7 +274,5 @@ public class BotWME extends WME {
 		this.shot = shot;
 	}
 	
-
-
 
 }

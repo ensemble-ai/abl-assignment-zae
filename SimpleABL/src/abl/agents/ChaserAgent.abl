@@ -27,7 +27,7 @@ behaving_entity ChaserAgent {
 	register act moveLeft(int) with MoveLeft;
 	register act moveRight(int) with MoveRight;
 	register act moveTo(int, int, int, int) with MoveTo;
-	register act setTrajectory(int, int, int, boolean) with SetTrajectory;
+	register act setTrajectory(int, int, int) with SetTrajectory;
 	register act moveAway(int, int, int, int) with MoveAway;
 	register act stop(int) with Stop;
 	register act addBot() with AddBot;
@@ -36,6 +36,7 @@ behaving_entity ChaserAgent {
 	register act setColor(int, int, int, int) with SetColor;
 	register act resetMoves() with ResetMoves;
 	register act resetFired() with ResetFired;
+	register act resetOtherTrajectories(int) with ResetOtherTrajectories;
 	register act resetTrustUpdated() with ResetTrustUpdated;
 
 	/**
@@ -141,35 +142,134 @@ behaving_entity ChaserAgent {
 
 	/**
 	 * Makes all bots move towards the player's current location
+	 * 
+	 * Considers all 8 cardinal directions, and checks for bot collisions
 	 */
-	sequential behavior moveTo() { /* no bot collison */
+	sequential behavior moveTo() { // no bot collison
 		precondition { 
 			(PlayerWME locationX::playerX locationY::playerY)
 			bWME = (BotWME id::id moved==false)
 			BBWME = (BlackBoardWME)
-			(false==BBWME.isBotCollision(id, distance, playerDistance))
+			(true==bWME.calcPotentialTrajectory(playerX, playerY))	
+			(BotWME id==id potentialX::x potentialY::y)
+			(false==BBWME.isBotCollision(id, distance, playerDistance, x, y))
 		}
-		specificity 3;
-	
-		act setTrajectory(id, playerX, playerY, false);
+		specificity 10;
+		
+		act setTrajectory(id, x, y);
 		
 		subgoal moveTo();
 	}
+	
+	/**
+	 * Try moving up 
+	 */
+	sequential behavior moveTo() {
+		precondition {
+			(PlayerWME locationY::playerY)
+			bWME = (BotWME locationY::botY id::id moved==false) 
+			(botY > (playerY + botSpeed))
+			BBWME = (BlackBoardWME)
+			(false==BBWME.isBotCollision(id, distance, playerDistance, 0, -botSpeed))
+		}
+		specificity 4;
+		
+		act setTrajectory(id, 0, -2);
+		subgoal moveTo();
+	}
+
+	/**
+	 * Try moving down
+	 */
+	sequential behavior moveTo() {
+		precondition {
+			(PlayerWME locationY::playerY)
+			bWME = (BotWME locationY::botY id::id moved==false) 
+			(botY < (playerY - botSpeed))
+			BBWME = (BlackBoardWME)
+			//(true==bWME.setPotentialTrajectory(0,botSpeed))
+			(false==BBWME.isBotCollision(id, distance, playerDistance, 0, botSpeed))
+		}
+		specificity 4;
+		
+		act setTrajectory(id, 0, botSpeed);
+		subgoal moveTo();
+	}
+	
+	/**
+	 * Try moving left
+	 */
+	sequential behavior moveTo() {
+		precondition {
+			(PlayerWME locationX::playerX)
+			bWME = (BotWME locationX::botX id::id moved==false) 
+			(botX > (playerX + botSpeed))
+			BBWME = (BlackBoardWME)
+			//(true==bWME.setPotentialTrajectory(-botSpeed,0))
+			(false==BBWME.isBotCollision(id, distance, playerDistance, -botSpeed, 0))
+		}
+		specificity 4;
+		
+		act setTrajectory(id, -2, 0);
+		subgoal moveTo();
+	}
+	
+	/**
+	 * Try moving right
+	 */
+	sequential behavior moveTo() {
+		precondition {
+			(PlayerWME locationX::playerX)
+			bWME = (BotWME locationX::botX id::id moved==false) 
+			(botX < (playerX - botSpeed))
+			BBWME = (BlackBoardWME)
+			//(true==bWME.setPotentialTrajectory(botSpeed,0))
+			(false==BBWME.isBotCollision(id, distance, playerDistance, botSpeed, 0))
+		}
+		specificity 4;
+	
+		act setTrajectory(id, botSpeed, 0);
+		subgoal moveTo();
+	}
+
+	/**
+	 * Error edge case: due to game engine. 
+	 */
+	sequential behavior moveTo() {
+		precondition {
+			bWME = (BotWME locationX::botX id::id moved==false) 
+			BBWME = (BlackBoardWME)
+			(true==BBWME.isPermanentBotCollision(id, distance))
+			(BotWME id==id potentialX::x potentialY::y)
+		}
+		specificity 3;
+	
+		mental_act {
+			System.out.println("IMM STUUUCCKKKKKK");
+			//x = 2*x;
+			//y = 2*y;
+		}
+		
+		/*
+		act setTrajectory(id, x, y);
+		act resetMoves();
+		act resetOtherTrajectories(id);
+		*/
+		//act resetMoves();
+		act setTrajectory(id, 0, 0);
+		//act setTrajectory(id, x, y);
+		//subgoal moveTo();
+	}	
 	
 	sequential behavior moveTo() {
-		precondition {  /* bot collision */
-			(PlayerWME locationX::playerX locationY::playerY)
+		precondition { 
 			bWME = (BotWME id::id moved==false)
-			BBWME = (BlackBoardWME)
-			(BBWME.isBotCollision(id, distance, playerDistance))
 		}
-		specificity 3;
-
-		act setTrajectory(id, playerX, playerY, true);
+		specificity 2;
 		
+		act setTrajectory(id, 0, 0);
 		subgoal moveTo();
 	}
-
 	
 	/**
 	 * Makes all bots move towards the player's current location
@@ -181,8 +281,21 @@ behaving_entity ChaserAgent {
 		specificity 1;
 		act resetMoves();
 		succeed_step;
-	}	
+	}		
+	
+	
+			
+	sequential behavior changeTrust() {
+		precondition { 
+			bWME = (BotWME id::id moved==false)
+			BBWME = (BlackBoardWME)
+			(BBWME.isBulletCollision(id))
+		}
+		specificity 3;
+
 		
+		act changeTrust(id, -10);
+	}
 	
 	/**
 	 * Moves the bot up if the player is above the bot.
