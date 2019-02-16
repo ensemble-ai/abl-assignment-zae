@@ -20,6 +20,10 @@ public class BotWME extends WME {
 	/** Trajectory of the bot */
 	private Point trajectory;
 	
+	/** possible rajectory of the bot */
+	private int potentialX;
+	private int potentialY;
+	
 	/** Target destination of the bot */
 	private Point destination;
 	
@@ -53,6 +57,8 @@ public class BotWME extends WME {
 		this.trust = trust;
 		this.hasFired = hasFired;
 		this.moved = moved;
+		this.potentialX = 0;
+		this.potentialY = 0;
 	}
 
 	public boolean check() {
@@ -102,7 +108,7 @@ public class BotWME extends WME {
 		
 		int speed = GameEngine.BotSpeed;
 		
-		System.out.println("Calculating trajectory!");
+		//System.out.println("Calculating trajectory!");
 		
 		if(x - targetX > speed) {	
 			dirx = -speed;
@@ -115,23 +121,18 @@ public class BotWME extends WME {
 			diry = speed;			
 		}
 
-		/*
+		
 		if(dirx != 0 && diry != 0) { 
 			//TODO: check, how do ints get truncated when negative?
-			System.out.println("moving diagonal!");
 			dirx = (int)((double)dirx * sqrt2); 
 			diry = (int)((double)diry * sqrt2); 
-			if(dirx != 0 && diry != 0) { 
-				System.out.println("still moving diagonal!");
-			}
 		}//bot is heading diagonal, so mod the speed
-		*/
 		
+	
+		potentialX = dirx;
+		potentialY = diry;
 		return setPotentialTrajectory(dirx, diry);
 	}
-
-	
-	
 	
 	
 	/**
@@ -208,5 +209,32 @@ public class BotWME extends WME {
 		this.moved = moved;
 	}
 
+	/**
+	 * @return the potentialX
+	 */
+	public int getPotentialX() {
+		return potentialX;
+	}
+
+	/**
+	 * @param potentialX the potentialX to set
+	 */
+	public void setPotentialX(int potentialX) {
+		this.potentialX = potentialX;
+	}
+
+	/**
+	 * @return the potentialY
+	 */
+	public int getPotentialY() {
+		return potentialY;
+	}
+
+	/**
+	 * @param potentialY the potentialY to set
+	 */
+	public void setPotentialY(int potentialY) {
+		this.potentialY = potentialY;
+	}
 
 }

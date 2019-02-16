@@ -18,15 +18,17 @@ public class SetTrajectory extends BaseAction {
 	 * 
 	 * 	Args:
 	 *  - 0: int: id of bot
+	 *  - 1: int: x
+	 *  - 2: int: y
 	 */
 	public void execute(Object[] args) {
 		
 		for(Bot b:GameEngine.getInstance().getBots()) {
 			if(b.getId() == (Integer)args[0]) {
 					//b.setTrajectory(calcTrajectory(b.getX(), b.getY(), (Integer)args[1],(Integer)args[2]));
-				b.setTrajectory(b.getPotentialTrajectory());
+				b.setTrajectory(new Point((Integer)args[1],(Integer)args[2]));
 			
-				System.out.println(b.getPotentialTrajectory());
+				//System.out.println(b.getPotentialTrajectory());
 				
 				b.setMoved(true);
 				return;

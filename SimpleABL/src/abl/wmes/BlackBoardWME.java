@@ -36,20 +36,23 @@ public class BlackBoardWME extends WME {
 	 * @param pDist
 	 * @return
 	 */
-	public Boolean isBotCollision(int id, int distance, int pDist) {
+	public Boolean isBotCollision(int id, int distance, int pDist, int trajectoryX, int trajectoryY) {
 		Point location = (Point)(bots.get(id));
 		//Point trajectory = calcTrajectory(location.x, location.y, playerLocation.x, playerLocation.y);
-		Point trajectory = null;
-		for(Bot b:GameEngine.getInstance().getBots()) {
+		/*
+		 * for(Bot b:GameEngine.getInstance().getBots()) {
 			if(b.getId() == id) {
 				trajectory = b.getPotentialTrajectory();
 			}
 		}
-		if(trajectory == null) {
-			System.out.println("HELP!!");
+		*/
+		if(location == null) {
+			return true;
 		}
-		Point newLocation = new Point(location.x + trajectory.x, location.y + trajectory.y);
+		
+		Point newLocation = new Point(location.x + trajectoryX, location.y + trajectoryY);
 		int dist = distance + Bot.Size;
+		//int dist = distance + Bot.Size + 4;
 		int size = Bot.Size;
 		
 		if(pDist > calcDistance(location.x, location.y, playerLocation.x, playerLocation.y)) {
@@ -84,7 +87,37 @@ public class BlackBoardWME extends WME {
 	
 		return false;
 	}
+
+	public Boolean isPermanentBotCollision(int id, int padding) {
+		int dist = padding + Bot.Size - GameEngine.BotSpeed;
+		int size = Bot.Size;
+		Point location = (Point)(bots.get(id));
 	
+		if(location == null) {
+			return false;
+		}
+		
+	    Iterator<Map.Entry<Integer, Point>> entries = bots.entrySet().iterator();
+	    while (entries.hasNext()) {
+	        Map.Entry entry = (Map.Entry)entries.next();	
+	    	Point point = (Point)entry.getValue();
+
+	    	if((int)entry.getKey() == id) {
+	    		continue;
+	    	}
+
+	    	if(location.x < point.getX() + dist &&
+	    			location.x + dist > point.getX()&&
+	    			location.y < point.getY() + dist &&
+	    			location.y + dist > point.getY()) {
+	    		return true;
+	    	}//collision
+	    }
+	    
+	    return false;
+	}
+		
+		
 	public Boolean isBulletCollision(int id) {
 		//where bot was
 		Point location = (Point)(bots.get(id));
