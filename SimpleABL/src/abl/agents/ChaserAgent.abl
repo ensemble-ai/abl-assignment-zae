@@ -146,6 +146,7 @@ behaving_entity ChaserAgent {
 	sequential behavior changeTrust() {
 		precondition {
 			bWME = (BotWME id::id shouldTrustChange==true)
+			(BotWME trust > -80 id==id)
 		}
 		subgoal Wait(500);
 
