@@ -27,7 +27,7 @@ behaving_entity ChaserAgent {
 	register act moveLeft(int) with MoveLeft;
 	register act moveRight(int) with MoveRight;
 	register act moveTo(int, int, int, int) with MoveTo;
-	register act setTrajectory(int, int, int, boolean) with SetTrajectory;
+	register act setTrajectory(int) with SetTrajectory;
 	register act moveAway(int, int, int, int) with MoveAway;
 	register act stop(int) with Stop;
 	register act addBot() with AddBot;
@@ -104,23 +104,125 @@ behaving_entity ChaserAgent {
 
 	/**
 	 * Makes all bots move towards the player's current location
+	 * 
+	 * Considers all 8 cardinal directions, and checks for bot collisions
 	 */
-	sequential behavior moveTo() { /* no bot collison */
+	sequential behavior moveTo() { // no bot collison
 		precondition { 
 			(PlayerWME locationX::playerX locationY::playerY)
 			bWME = (BotWME id::id moved==false)
 			BBWME = (BlackBoardWME)
+			(true==bWME.calcPotentialTrajectory(playerX, playerY))	
 			(false==BBWME.isBotCollision(id, distance, playerDistance))
 		}
-		specificity 3;
-	
-		act setTrajectory(id, playerX, playerY, false);
+		specificity 10;
+		
+		mental_act{
+			System.out.println("first moveto");
+		}
+		
+		act setTrajectory(id);
 		
 		subgoal moveTo();
 	}
 	
+	/**
+	 * Try moving up 
+	 */
+	/*
 	sequential behavior moveTo() {
-		precondition {  /* bot collision */
+		precondition {
+			(PlayerWME locationY::playerY)
+			bWME = (BotWME locationY::botY id::id moved==false) 
+			(botY > (playerY + botSpeed))
+			BBWME = (BlackBoardWME)
+			(true==bWME.setPotentialTrajectory(0,-botSpeed))
+			(false==BBWME.isBotCollision(id, distance, playerDistance))
+		}
+		specificity 3;
+		
+		act setTrajectory(id);
+		subgoal moveTo();
+	}
+	*/
+
+	/**
+	 * Try moving down
+	 */
+	/*
+	sequential behavior moveTo() {
+		precondition {
+			(PlayerWME locationY::playerY)
+			bWME = (BotWME locationY::botY id::id moved==false) 
+			(botY < (playerY - botSpeed))
+			BBWME = (BlackBoardWME)
+			(true==bWME.setPotentialTrajectory(0,botSpeed))
+			(false==BBWME.isBotCollision(id, distance, playerDistance))
+		}
+		specificity 3;
+		
+		act setTrajectory(id);
+		subgoal moveTo();
+	}
+	*/
+	
+	/**
+	 * Try moving left
+	 */
+	/*
+	sequential behavior moveTo() {
+		precondition {
+			(PlayerWME locationX::playerX)
+			bWME = (BotWME locationX::botX id::id moved==false) 
+			(botX > (playerX + botSpeed))
+			BBWME = (BlackBoardWME)
+			(true==bWME.setPotentialTrajectory(-botSpeed,0))
+			(false==BBWME.isBotCollision(id, distance, playerDistance))
+		}
+		specificity 2;
+		
+		act setTrajectory(id);
+		subgoal moveTo();
+	}
+*/
+	
+	/**
+	 * Try moving right
+	 */
+	/*
+	sequential behavior moveTo() {
+		precondition {
+			(PlayerWME locationX::playerX)
+			bWME = (BotWME locationX::botX id::id moved==false) 
+			(botX < (playerX - botSpeed))
+			BBWME = (BlackBoardWME)
+			(true==bWME.setPotentialTrajectory(botSpeed,0))
+			(false==BBWME.isBotCollision(id, distance, playerDistance))
+		}
+		specificity 2;
+	
+		
+		act setTrajectory(id);
+		subgoal moveTo();
+	}
+	*/
+
+	/*
+	sequential behavior moveTo() {
+		precondition { 
+			bWME = (BotWME id::id moved==false)
+			(true==bWME.setPotentialTrajectory(0,0))
+		}
+		specificity 2;
+		
+		act setTrajectory(id);
+		subgoal moveTo();
+	}
+	*/
+	
+	/*
+	sequential behavior moveTo() {
+		precondition {  // bot collision 
 			(PlayerWME locationX::playerX locationY::playerY)
 			bWME = (BotWME id::id moved==false)
 			BBWME = (BlackBoardWME)
@@ -132,6 +234,7 @@ behaving_entity ChaserAgent {
 		
 		subgoal moveTo();
 	}
+	*/
 	
 	sequential behavior changeTrust() {
 		precondition { 

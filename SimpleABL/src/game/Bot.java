@@ -13,7 +13,10 @@ public class Bot {
 	private Point location;
 	
 	/** Trajectory of the bot */
-	private Point trajectory;
+	private Point trajectory;	
+	
+	/** Trajectory of the bot */
+	private Point potentialTrajectory;
 	
 	/** Has the bot moved this round? */
 	private boolean moved;
@@ -143,6 +146,14 @@ public class Bot {
 		} else {
 			this.setColor(basecolor);
 		}
+	}
+
+	public Point getPotentialTrajectory() {
+		return this.potentialTrajectory;
+	}
+
+	public void setPotentialTrajectory(Point potentialTrajectory) {
+		this.potentialTrajectory = potentialTrajectory;
 	}
 	
 }

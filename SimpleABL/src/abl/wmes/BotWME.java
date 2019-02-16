@@ -3,6 +3,7 @@ package abl.wmes;
 import java.awt.Color;
 import java.awt.Point;
 
+import game.Bot;
 import game.GameEngine;
 import wm.WME;
 /**
@@ -58,6 +59,7 @@ public class BotWME extends WME {
 		return true;
 	}
 
+	/*
 	public Point calcTrajectory(int targetX, int targetY) { 
 		Point point = location; 
 		int dirx = 0;
@@ -77,6 +79,59 @@ public class BotWME extends WME {
 		
 		return new Point(dirx, diry);
 	}
+	*/
+	
+	public boolean setPotentialTrajectory(int dirx, int diry) {
+		for(Bot b:GameEngine.getInstance().getBots()) {
+			if(b.getId() == id) {
+				b.setPotentialTrajectory(new Point(dirx, diry));
+				return true;
+			}
+		}
+		
+		System.out.println("HELP! I can't find that bot!");
+		return false;
+	}
+		
+	public boolean calcPotentialTrajectory(int targetX, int targetY) {
+		final double sqrt2 = 1.41421356237;
+		int dirx = 0;
+		int diry = 0;
+		int x = (int)location.getX();
+		int y = (int)location.getY();
+		
+		int speed = GameEngine.BotSpeed;
+		
+		System.out.println("Calculating trajectory!");
+		
+		if(x - targetX > speed) {	
+			dirx = -speed;
+		}else if(x - targetX < -speed) {
+			dirx = speed;			
+		}
+		if(y - targetY  > speed) {	
+			diry = -speed;
+		}else if(y - targetY < -speed) {
+			diry = speed;			
+		}
+
+		/*
+		if(dirx != 0 && diry != 0) { 
+			//TODO: check, how do ints get truncated when negative?
+			System.out.println("moving diagonal!");
+			dirx = (int)((double)dirx * sqrt2); 
+			diry = (int)((double)diry * sqrt2); 
+			if(dirx != 0 && diry != 0) { 
+				System.out.println("still moving diagonal!");
+			}
+		}//bot is heading diagonal, so mod the speed
+		*/
+		
+		return setPotentialTrajectory(dirx, diry);
+	}
+
+	
+	
 	
 	
 	/**

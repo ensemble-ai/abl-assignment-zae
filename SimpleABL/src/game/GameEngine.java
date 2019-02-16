@@ -284,7 +284,7 @@ public class GameEngine extends JPanel implements KeyListener {
 			int botY = b.getLocation().y + b.getTrajectory().y;
 			botY = Math.max(0, botY);
 			botY = Math.min(dimensions.y, botY);
-
+			
 			b.setLocation(new Point(botX, botY));
 		}
 	}

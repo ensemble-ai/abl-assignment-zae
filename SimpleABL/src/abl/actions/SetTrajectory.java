@@ -18,19 +18,15 @@ public class SetTrajectory extends BaseAction {
 	 * 
 	 * 	Args:
 	 *  - 0: int: id of bot
-	 *  - 1: int: playerX
-	 *  - 2: int: playerY 
-	 *  - 3: boolean: is there a collision
 	 */
 	public void execute(Object[] args) {
 		
 		for(Bot b:GameEngine.getInstance().getBots()) {
 			if(b.getId() == (Integer)args[0]) {
-				if((Boolean)args[3]) {
-					b.setTrajectory(new Point(0,0));
-				}else {
-					b.setTrajectory(calcTrajectory(b.getX(), b.getY(), (Integer)args[1],(Integer)args[2]));
-				}
+					//b.setTrajectory(calcTrajectory(b.getX(), b.getY(), (Integer)args[1],(Integer)args[2]));
+				b.setTrajectory(b.getPotentialTrajectory());
+			
+				System.out.println(b.getPotentialTrajectory());
 				
 				b.setMoved(true);
 				return;
@@ -38,7 +34,7 @@ public class SetTrajectory extends BaseAction {
 		}
 	}
 	
-	public Point calcTrajectory(int x, int y, int targetX, int targetY) { 
+	/*public Point calcTrajectory(int x, int y, int targetX, int targetY) { 
 		final double sqrt2 = 1.41421356237;
 		int dirx = 0;
 		int diry = 0;
@@ -63,5 +59,6 @@ public class SetTrajectory extends BaseAction {
 		
 		return new Point(dirx, diry);
 	}
+	*/
 	
 }
