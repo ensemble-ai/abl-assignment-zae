@@ -140,11 +140,18 @@ behaving_entity ChaserAgent {
 			(BBWME.isBulletCollision(id))
 		}
 		specificity 3;
-
 		
 		act changeTrust(id, -10);
 	}
-	
+	sequential behavior changeTrust() {
+		precondition {
+			bWME = (BotWME id::id shouldTrustChange==true)
+		}
+		subgoal Wait(500);
+
+		act changeTrust(id, 2);
+		subgoal changeTrust();
+	}
 	
 	/**
 	 * Makes all bots move towards the player's current location

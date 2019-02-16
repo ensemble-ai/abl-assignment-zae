@@ -18,6 +18,9 @@ public class Bot {
 	/** Has the bot moved this round? */
 	private boolean moved;
 	
+	/** Should the bot change its trust? */
+	private boolean shouldTrustChange;
+		
 	/** unique bot ID */
 	private int id;
 
@@ -40,6 +43,7 @@ public class Bot {
 		this.basecolor = new Color(255,165,0);
 		this.color = new Color(255,165,0);
 		this.hasFired = false;
+		this.shouldTrustChange = true;
 		
 	}
 
@@ -111,6 +115,13 @@ public class Bot {
 	
 	public void setMoved(Boolean moved) {
 		this.moved = moved;
+	}
+	
+	public Boolean shouldTrustChange() {
+		return shouldTrustChange;
+	}
+	public void setTrustChange(Boolean shouldTrustChange) {
+		this.shouldTrustChange = shouldTrustChange;
 	}
 
 	public int getTrust() {
