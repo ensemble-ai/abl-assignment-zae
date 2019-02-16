@@ -37,8 +37,11 @@ public class BotWME extends WME {
 	/** Has this bot moved this round? */
 	private Boolean moved;
 
-	private Boolean shouldTrustChange;
+	//private Boolean shouldTrustChange;
 	
+	private Boolean trustUpdated;
+	
+	private Boolean shot;
 	
 	
 	/**
@@ -47,7 +50,7 @@ public class BotWME extends WME {
 
 	public BotWME(Point location, Point trajectory, int id, 
 				  Color color, int formPos, int trust, Boolean moved, 
-				  Boolean hasFired, Boolean shouldTrustChange) {
+				  Boolean hasFired, Boolean trustUpdated, Boolean shot) {
 		this.location = location;
 		this.trajectory = trajectory;
 		this.id = id;
@@ -56,7 +59,8 @@ public class BotWME extends WME {
 		this.trust = trust;
 		this.hasFired = hasFired;
 		this.moved = moved;
-		this.shouldTrustChange = shouldTrustChange;
+		this.shot = shot;
+		this.trustUpdated = trustUpdated;
 	}
 
 	public boolean check() {
@@ -157,12 +161,35 @@ public class BotWME extends WME {
 	public void setMoved(Boolean moved) {
 		this.moved = moved;
 	}
-	public Boolean getShouldTrustChange() {
-		return shouldTrustChange;
+
+	/**
+	 * @return the trustUpdated
+	 */
+	public Boolean getTrustUpdated() {
+		return trustUpdated;
 	}
-	public void getShouldTrustChange(Boolean shouldTrustChange) {
-		this.shouldTrustChange = shouldTrustChange;
+
+	/**
+	 * @param trustUpdated the trustUpdated to set
+	 */
+	public void setTrustUpdated(Boolean trustUpdated) {
+		this.trustUpdated = trustUpdated;
 	}
+
+	/**
+	 * @return the shot
+	 */
+	public Boolean getShot() {
+		return shot;
+	}
+
+	/**
+	 * @param shot the shot to set
+	 */
+	public void setShot(Boolean shot) {
+		this.shot = shot;
+	}
+	
 
 
 

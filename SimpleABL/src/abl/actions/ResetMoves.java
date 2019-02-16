@@ -18,7 +18,6 @@ public class ResetMoves extends BaseAction {
 	public void execute(Object[] args) {
 		for(Bot b:GameEngine.getInstance().getBots()) {
 			b.setMoved(false);
-			b.setTrustChange(true);
 		}
 	}
 }
