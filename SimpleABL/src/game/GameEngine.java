@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-import abl.generated.ChaserAgent;
+import abl.generated.Advanced;
 //import abl.generated.Test;
 import game.input.*;
 /**
@@ -144,7 +144,7 @@ public class GameEngine extends JPanel implements KeyListener {
 	 * Note: this method does not return, the ABL agent decision cycle claims the thread.
 	 */
 	public void startAgent() {
-		 ChaserAgent agent = new ChaserAgent();
+		 Advanced agent = new Advanced();
 		 //Test agent = new Test();
 		 agent.startBehaving();
 	}
