@@ -74,7 +74,6 @@ public class Bot {
 		this.trajectory = trajectory;
 	}
 
-
 	public int getX( ) {
 		return this.location.x;
 	}
@@ -128,15 +127,6 @@ public class Bot {
 		this.moved = moved;
 	}
 	
-	/*
-	 * public Boolean shouldTrustChange() {
-		return shouldTrustChange;
-	}
-	public void setTrustChange(Boolean shouldTrustChange) {
-		this.shouldTrustChange = shouldTrustChange;
-	}
-	*/
-
 	public int getTrust() {
 		return trust;
 	}
@@ -176,21 +166,6 @@ public class Bot {
 	public void setPotentialTrajectory(Point potentialTrajectory) {
 		this.potentialTrajectory = potentialTrajectory;
 	}
-	/**
-	 * @return the shouldTrustChange
-	 */
-	/*public boolean isShouldTrustChange() {
-		return shouldTrustChange;
-	}
-*/
-	/**
-	 * @param shouldTrustChange the shouldTrustChange to set
-	 */
-	/*public void setShouldTrustChange(boolean shouldTrustChange) {
-		this.shouldTrustChange = shouldTrustChange;
-	}
-	*/
-	
 
 	/**
 	 * @return the shot

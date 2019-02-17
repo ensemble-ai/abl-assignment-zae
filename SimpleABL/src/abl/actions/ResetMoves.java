@@ -7,7 +7,6 @@ import java.awt.Point;
 /**
  * Reset variables that keep track of which bots have moved 
  * 
- * @author Ben Weber 3-7-11
  */
 public class ResetMoves extends BaseAction {
 

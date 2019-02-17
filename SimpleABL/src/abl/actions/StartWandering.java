@@ -18,6 +18,8 @@ public class StartWandering extends BaseAction {
 	public void execute(Object[] args) {
 		for(Bot b:GameEngine.getInstance().getBots()) {
 			if(b.getId() == (Integer)args[0]) {
+				System.out.println("Bot " + b.getId() + " is starting to wander");
+				
 				Point dimensions = GameEngine.getInstance().getDimensions();
 				Point target = new Point((int)(dimensions.x*Math.random()), (int)(dimensions.y*Math.random()));
 				
