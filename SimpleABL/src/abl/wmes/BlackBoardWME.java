@@ -177,6 +177,5 @@ public class BlackBoardWME extends WME {
 	
 		return (int)Math.ceil(Math.sqrt(diffX + diffY)); 
 	}	
-	
-	
+
 }

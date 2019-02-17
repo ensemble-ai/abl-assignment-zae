@@ -481,4 +481,11 @@ public class GameEngine extends JPanel implements KeyListener {
 	public Point getDimensions() {
 		return dimensions;
 	}
+
+	/**
+	 * @param dimensions the dimensions to set
+	 */
+	public void setDimensions(Point dimensions) {
+		this.dimensions = dimensions;
+	}
 }

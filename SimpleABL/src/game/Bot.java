@@ -40,7 +40,11 @@ public class Bot {
 	
 	private Boolean hasFired;
 	
-	private int trust; 
+	private int trust;
+	
+	private Boolean wandering;
+	
+	private Point wanderingTarget;
 	
 	public Bot() {
 		this.location = new Point(0,0);
@@ -50,6 +54,8 @@ public class Bot {
 		this.color = new Color(255,165,0);
 		this.hasFired = false;
 		this.trustUpdated = false;
+		this.wandering = false;
+		this.potentialTrajectory = new Point(0,0);
 	}
 
 	public Point getLocation() {
@@ -212,6 +218,34 @@ public class Bot {
 	 */
 	public void setTrustUpdated(boolean trustUpdated) {
 		this.trustUpdated = trustUpdated;
+	}
+
+	/**
+	 * @return the wandering
+	 */
+	public Boolean isWandering() {
+		return wandering;
+	}
+
+	/**
+	 * @param wandering the wandering to set
+	 */
+	public void setWandering(Boolean wandering) {
+		this.wandering = wandering;
+	}
+
+	/**
+	 * @return the wanderingTarget
+	 */
+	public Point getWanderingTarget() {
+		return wanderingTarget;
+	}
+
+	/**
+	 * @param wanderingTarget the wanderingTarget to set
+	 */
+	public void setWanderingTarget(Point wanderingTarget) {
+		this.wanderingTarget = wanderingTarget;
 	}
 
 }
