@@ -15,6 +15,5 @@ public class AddBotInt extends BaseAction {
 	public void execute(Object[] args) {
 		int modArg = (Integer)args[0] % (Integer)args[1];
 		GameEngine.getInstance().addBots(modArg);
-		
 	}
 }

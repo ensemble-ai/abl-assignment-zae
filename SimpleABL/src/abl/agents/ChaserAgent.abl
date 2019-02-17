@@ -108,7 +108,6 @@ behaving_entity ChaserAgent {
 	 */
 	sequential behavior manageFiring() {
 		subgoal Wait(2000);					// this suspends the execution of the behavior
-		//act addBot();
 		with (persistent) subgoal fire();
 	}
 	
@@ -149,13 +148,6 @@ behaving_entity ChaserAgent {
 		with (priority 1) subgoal moveTo();
 	}
 
-	
-	//if player not in sight but bot is not already wandering
-	//  pick rand point to move to
-	//	
-	//if collision, pick new point to move to. 
-	//else move
-	
 	/**
 	 * move bots in random direction
 	 * sets random direction and starts random movement
@@ -214,19 +206,18 @@ behaving_entity ChaserAgent {
 	 */
 	sequential behavior wander() {
 		precondition {
-			bWME = (BotWME id::id moved==false wandering==true wanderingX::wx wanderingY::wy)
+			bWME = (BotWME id::id moved==false wandering==true wanderingX::wx wanderingY::wy locationX::X locationY::Y)
 			(true==bWME.calcPotentialTrajectory(wx, wy))	
 			(BotWME id==id potentialX::px potentialY::py)
 			BBWME = (BlackBoardWME)
 			(false==BBWME.isBotCollision(id, distance, playerDistance, px, py))
 		}
 		specificity 5;
-	
+		
 		act setTrajectory(id, px, py);
 		
 		subgoal wander();
 	}
-	
 	
 	/**
 	 * bot was wandering but needs to reset target location due to collision 
@@ -237,6 +228,7 @@ behaving_entity ChaserAgent {
 		}
 		specificity 4;
 		
+		act setTrajectory(id, 0, 0);
 		act startWandering(id);
 	
 		subgoal wander();

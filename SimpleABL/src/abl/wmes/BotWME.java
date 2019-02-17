@@ -102,14 +102,14 @@ public class BotWME extends WME {
 		
 		//System.out.println("Calculating trajectory!");
 		
-		if(x - targetX > speed) {	
+		if(x - targetX >= speed) {	
 			dirx = -speed;
-		}else if(x - targetX < -speed) {
+		}else if(x - targetX <= -speed) {
 			dirx = speed;			
 		}
-		if(y - targetY  > speed) {	
+		if(y - targetY  >= speed) {	
 			diry = -speed;
-		}else if(y - targetY < -speed) {
+		}else if(y - targetY <= -speed) {
 			diry = speed;			
 		}
 
@@ -119,7 +119,6 @@ public class BotWME extends WME {
 			dirx = (int)((double)dirx * sqrt2); 
 			diry = (int)((double)diry * sqrt2); 
 		}//bot is heading diagonal, so mod the speed
-		
 	
 		potentialX = dirx;
 		potentialY = diry;

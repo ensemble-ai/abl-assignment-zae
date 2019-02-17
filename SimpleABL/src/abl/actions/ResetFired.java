@@ -7,13 +7,12 @@ import game.GameEngine;
 import java.awt.Color;
 import java.awt.Point;
 /**
- * Sets color of the chaser. 
+ * Reset variables that keep track of which bots have fired 
  */
 public class ResetFired extends BaseAction {
 
 	/**
-	 * Sets color of the bot.
-	 * args[0] - boolean
+	 * Args:
 	 */
 	public void execute(Object[] args) {
 		for(Bot b:GameEngine.getInstance().getBots()) {

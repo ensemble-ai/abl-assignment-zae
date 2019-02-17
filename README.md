@@ -2,7 +2,32 @@
 ABL-Assignment
 ====================
 
-Description
+Trust 
+--------------------
+Our goal for this assignment was to model the social property of trust 
+and incorporate this into our playable experience. We wanted a bot’s level 
+of trust to influence how it interacted with the player, and we wanted to give
+the player mechanisms to influence this level of trust. We represent trust in
+our bots through color. A low level of trust is represented by the color red,
+and a high level of trust by green. A bots color may fall anywhere in this
+range depending on its degree of trust, and will slowly fade from one color to
+another as its level of trust changes. 
+Our bots wander around the map, avoiding collision with other bots and
+obstacles. If a bot can “see” the player (they are within some radius) the bot
+follows the player. Bots maintain some minimum distance between other bots and
+the player. 
+Bots spawn with a random level of trust, but can change through
+interactions with the player. If the player shots at and hits a bot, the bot’s
+level of trust in the player will decrease. However, if the player spends time
+within sight of the bot and does not shoot at it, the bot’s level of trust in
+the player will slowly increase. A bot will only shoot at the player if it
+distrusts them. 
+
+The player can shoot at the bots by pressing spacebar, and can spawn a new bot
+by pressing n. 
+
+
+Assignment Instructions
 --------------------
 For this assignment, you will be authoring rudimentary, intermediate, and advanced ABL behaviors for a single agent that controls multiple bots.
 
