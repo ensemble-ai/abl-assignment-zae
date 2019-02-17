@@ -5,7 +5,7 @@ ABL-Assignment
 Trust 
 --------------------
 Our goal for this assignment was to model the social property of trust 
-and incoorperarte this into our playable experience. We wanted a bot’s level 
+and incorporate this into our playable experience. We wanted a bot’s level 
 of trust to influence how it interacted with the player, and we wanted to give
 the player mechanisms to influence this level of trust. We represent trust in
 our bots through color. A low level of trust is represented by the color red,
