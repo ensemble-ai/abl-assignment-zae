@@ -19,11 +19,11 @@ public class Fire extends BaseAction {
 	public void execute(Object[] args) {
 		for(Bot b:GameEngine.getInstance().getBots()) {
 			if(b.getId() == (Integer)args[2]) {
-				if (b.getTrust() < -50) {
+				//if (b.getTrust() < -50) {
 					GameEngine.getInstance().fireBullet(
 							new Point((int)(b.getLocation().getX()), (int)(b.getLocation().getY())), 
 							new Point((Integer)args[0], (Integer)args[1]));					
-				}
+				//}
 				b.setFiredCheck(true);
 			}
 		}

@@ -20,7 +20,7 @@ public class BotWME extends WME {
 	/** Trajectory of the bot */
 	private Point trajectory;
 	
-	/** possible rajectory of the bot */
+	/** possible trajectory of the bot */
 	private int potentialX;
 	private int potentialY;
 	
@@ -47,15 +47,18 @@ public class BotWME extends WME {
 	private Boolean trustUpdated;
 	
 	private Boolean shot;
-	
+
+	private Boolean wandering;
+
+	private Point wanderingTarget;
 	
 	/**
 	 * Instantiates a working memory element for tracking a bot.
 	 */
-
 	public BotWME(Point location, Point trajectory, int id, 
 				  Color color, int formPos, int trust, Boolean moved, 
-				  Boolean hasFired, Boolean trustUpdated, Boolean shot) {
+				  Boolean hasFired, Boolean trustUpdated, Boolean shot, 
+				  Boolean wandering, Point wanderingTarget) {
 		this.location = location;
 		this.trajectory = trajectory;
 		this.id = id;
@@ -68,34 +71,14 @@ public class BotWME extends WME {
 		this.potentialY = 0;
 		this.shot = shot;
 		this.trustUpdated = trustUpdated;
+		this.wandering = wandering;
+		this.wanderingTarget = wanderingTarget;
 	}
 
 	public boolean check() {
 		return true;
 	}
 
-	/*
-	public Point calcTrajectory(int targetX, int targetY) { 
-		Point point = location; 
-		int dirx = 0;
-		int diry = 0;
-		int speed = GameEngine.BotSpeed;
-		
-		if(point.getX() - targetX > speed) {	
-			dirx = -speed;
-		}else if(point.getX() - targetX < -speed) {
-			dirx = speed;			
-		}
-		if(point.getY() - targetY  > speed) {	
-			diry = -speed;
-		}else if(point.getY() - targetY < -speed) {
-			diry = speed;			
-		}
-		
-		return new Point(dirx, diry);
-	}
-	*/
-	
 	public boolean setPotentialTrajectory(int dirx, int diry) {
 		for(Bot b:GameEngine.getInstance().getBots()) {
 			if(b.getId() == id) {
@@ -273,6 +256,32 @@ public class BotWME extends WME {
 	public void setShot(Boolean shot) {
 		this.shot = shot;
 	}
-	
 
+	/**
+	 * @return the wandering
+	 */
+	public Boolean getWandering() {
+		return wandering;
+	}
+
+	/**
+	 * @param wandering the wandering to set
+	 */
+	public void setWandering(Boolean wandering) {
+		this.wandering = wandering;
+	}
+
+	public int getWanderingX() {
+		if(wanderingTarget != null) {
+			return wanderingTarget.x;
+		}
+		return 0;
+	}
+
+	public int getWanderingY() {
+		if(wanderingTarget != null) {
+			return wanderingTarget.y;
+		}
+		return 0;
+	}
 }

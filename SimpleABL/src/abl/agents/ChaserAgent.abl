@@ -28,7 +28,6 @@ behaving_entity ChaserAgent {
 	register act moveRight(int) with MoveRight;
 	register act moveTo(int, int, int, int) with MoveTo;
 	register act setTrajectory(int, int, int) with SetTrajectory;
-	register act moveAway(int, int, int, int) with MoveAway;
 	register act stop(int) with Stop;
 	register act addBot() with AddBot;
 	register act fire(int, int, int) with Fire;
@@ -38,7 +37,9 @@ behaving_entity ChaserAgent {
 	register act resetFired() with ResetFired;
 	register act resetOtherTrajectories(int) with ResetOtherTrajectories;
 	register act resetTrustUpdated() with ResetTrustUpdated;
-
+	register act startWandering(int) with StartWandering;
+	register act stopWandering(int) with StopWandering;
+	
 	/**
 	 * Define the sensors that add game state to working memory. Each sensor defines the name of the WME class
 	 * that it is responsible for managing and the Java sensor class that implements the functionality. 
@@ -57,7 +58,9 @@ behaving_entity ChaserAgent {
 	int distance = 15;
 	int playerDistance = 30;
 	int trustDecrease = -10;
-	int trustIncrease = 2;
+	int trustIncrease = 5;
+	int sight = 150;
+	int fireThreshold = -50;
 
 	/**
 	 * Keep track of updates to trust 
@@ -84,7 +87,10 @@ behaving_entity ChaserAgent {
 	 */
 	sequential behavior changeTrust() {
 		precondition { 
-			bWME = (BotWME id::id shot==false trustUpdated==false)
+			bWME = (BotWME id::id shot==false trustUpdated==false locationX::botX locationY::botY)
+			(PlayerWME locationX::playerX locationY::playerY)	// locationX invokes PlayerMWE.getLocationX() 
+			BBWME = (BlackBoardWME)
+			(sight > BBWME.calcDistance(playerX, playerY, botX, botY))
 		}
 		specificity 4;
 		act changeTrust(id, trustIncrease);
@@ -113,9 +119,11 @@ behaving_entity ChaserAgent {
      */
 	sequential behavior fire() {
 		precondition {
-			(PlayerWME locationX::playerX locationY::playerY)	// locationX invokes PlayerMWE.getLocationX() 
-			(BotWME locationX::botX locationY::botY)   // :: is used to bind properties to behavior scoped variables
-			(BotWME id::id hasFired==false)
+			(PlayerWME locationX::playerX locationY::playerY)	 
+			(BotWME locationX::botX locationY::botY id::id hasFired==false trust::trust)
+			(fireThreshold > trust)
+			BBWME = (BlackBoardWME)
+			(sight > BBWME.calcDistance(playerX, playerY, botX, botY))
 		}
 		specificity 2;
 		//act fire(botX, botY, playerX, playerY);	
@@ -137,9 +145,111 @@ behaving_entity ChaserAgent {
 	 * Continuously move towards the player character.
 	 */
 	sequential behavior manageMovement() {
-		subgoal moveTo();
+		with (priority 2) subgoal wander();
+		with (priority 1) subgoal moveTo();
 	}
 
+	
+	//if player not in sight but bot is not already wandering
+	//  pick rand point to move to
+	//	
+	//if collision, pick new point to move to. 
+	//else move
+	
+	/**
+	 * move bots in random direction
+	 * sets random direction and starts random movement
+	 */
+	sequential behavior wander() {
+		precondition {
+			bWME = (BotWME id::id moved==false wandering==false locationX::X locationY::Y)
+			(PlayerWME locationX::playerX locationY::playerY)
+			BBWME = (BlackBoardWME)
+			(sight < BBWME.calcDistance(playerX, playerY, X, Y))
+		}
+		specificity 10;
+		
+		act startWandering(id);
+		
+		subgoal wander();
+	}
+
+	/**
+	 * move bots in random direction
+	 * stops wandering if bot sees player
+	 */
+	sequential behavior wander() {
+		precondition {
+			bWME = (BotWME id::id moved==false wandering==true locationX::X locationY::Y)
+			(PlayerWME locationX::playerX locationY::playerY)
+			BBWME = (BlackBoardWME)
+			(sight > BBWME.calcDistance(playerX, playerY, X, Y))
+		}
+		specificity 8;
+		
+		act stopWandering(id);
+		
+		subgoal wander();
+	}
+
+	/**
+	 * bot needs a new location to wander to
+	 */
+	 sequential behavior wander() {
+		 precondition {
+			bWME = (BotWME id::id moved==false wandering==true wanderingX::wx wanderingY::wy locationX::X locationY::Y)
+			BBWME = (BlackBoardWME)
+			(botSpeed >= BBWME.calcDistance(wx, wy, X, Y))
+		 }
+		 specificity 7;
+		 
+		 act startWandering(id);
+	
+		 subgoal wander();
+	 }
+	
+	
+	/**
+	 * bot continues to wander without collision 
+	 */
+	sequential behavior wander() {
+		precondition {
+			bWME = (BotWME id::id moved==false wandering==true wanderingX::wx wanderingY::wy)
+			(true==bWME.calcPotentialTrajectory(wx, wy))	
+			(BotWME id==id potentialX::px potentialY::py)
+			BBWME = (BlackBoardWME)
+			(false==BBWME.isBotCollision(id, distance, playerDistance, px, py))
+		}
+		specificity 5;
+	
+		act setTrajectory(id, px, py);
+		
+		subgoal wander();
+	}
+	
+	
+	/**
+	 * bot was wandering but needs to reset target location due to collision 
+	 */
+	sequential behavior wander() {
+		precondition {
+			bWME = (BotWME id::id moved==false wandering==true) 
+		}
+		specificity 4;
+		
+		act startWandering(id);
+	
+		subgoal wander();
+	}
+
+	/**
+	 * base case for wandering
+	 */
+	sequential behavior wander() {
+		specificity 1;
+		succeed_step;
+	}		
+	
 	/**
 	 * Makes all bots move towards the player's current location
 	 * 
@@ -148,15 +258,16 @@ behaving_entity ChaserAgent {
 	sequential behavior moveTo() { // no bot collison
 		precondition { 
 			(PlayerWME locationX::playerX locationY::playerY)
-			bWME = (BotWME id::id moved==false)
+			bWME = (BotWME id::id moved==false) //X::X Y::Y)
 			BBWME = (BlackBoardWME)
+			//(sight > bWME.calcDistance(playerX, playerY, X, Y))
 			(true==bWME.calcPotentialTrajectory(playerX, playerY))	
-			(BotWME id==id potentialX::x potentialY::y)
-			(false==BBWME.isBotCollision(id, distance, playerDistance, x, y))
+			(BotWME id==id potentialX::px potentialY::py)
+			(false==BBWME.isBotCollision(id, distance, playerDistance, px, py))
 		}
 		specificity 10;
 		
-		act setTrajectory(id, x, y);
+		act setTrajectory(id, px, py);
 		
 		subgoal moveTo();
 	}
@@ -396,12 +507,12 @@ behaving_entity ChaserAgent {
      * Note: priorities are used to ensure all goals are pursued, since the move() goal can thrash in this simple example
      */
     initial_tree {
-    	with (priority 4) mental_act {
+    	with (priority 6) mental_act {
 			System.out.println("Starting bot Agent");
     	}
      	
-    	with (priority 3) subgoal manageFiring();
-    	with (priority 2, persistent) subgoal manageTrust();
+    	with (priority 5) subgoal manageFiring();
+    	with (priority 4, persistent) subgoal manageTrust();
     	with (priority 1, persistent) subgoal manageMovement();
     }
 }
