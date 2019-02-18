@@ -26,6 +26,21 @@ distrusts them.
 The player can shoot at the bots by pressing spacebar, and can spawn a new bot
 by pressing n. 
 
+A Note on Bugs
+--------------------
+We are aware of a movement bug in our code. The problem occurs when a bot is
+spawned on top of another bot. When this happens, both bots freeze and are
+unable to move. This is because of the way we detect collision. Our bots will
+not choose to move in a direction that causes them to collide with another bot.
+When they are already overlapping, any direction they move will still be a
+"collision", so our bots do not move. Occasionally this bug also arises even
+when the agents are not spawned on top of one another. This happens when the
+bots trajectory has been set in abl when they are not near another bot, but the
+game engine updates the bot's locations faster than abl updates their
+trajectories. We are able to detect when bots end up in this position, but we
+have not yet come up with a solution that allows bots to break out of this
+position, while maintaining the desired movement behavior of bots when they are
+not "stuck". 
 
 Assignment Instructions
 --------------------
