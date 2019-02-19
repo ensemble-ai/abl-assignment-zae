@@ -19,7 +19,7 @@ public class AddBot extends BaseAction {
 	public void execute(Object[] args) {
 		Bot b = new Bot();
 		Random rn = new Random();
-		int x = rn.nextInt(201) - 100;	// random number [-100,100]
+		int x = rn.nextInt(181) - 80;	// random number [-80,100]
 		Point dimensions = GameEngine.getInstance().getDimensions();
 		
 		//TODO set location? - do we want this to be passed in? generated randomly?

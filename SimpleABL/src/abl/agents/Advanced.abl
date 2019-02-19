@@ -54,13 +54,16 @@ behaving_entity Advanced {
 	 * It is also possible to use constants from a Java interface (e.g.):
      * constants game.Constants;   
 	 */ 
-	int botSpeed = 2;
-	int distance = 15;
-	int playerDistance = 30;
-	int trustDecrease = -10;
-	int trustIncrease = 2;
-	int sight = 150;
-	int fireThreshold = -50;
+	int botSpeed		=   2;
+	int distance		=  15;	//distance to maintain from other bots
+	int playerDistance	=  30;	//distance to maintain from player
+	int trustDecrease	= -10;	//trust lost when shot
+	int trustIncrease	=   2;	//faster gain for trust if near player & not shot at
+	int negTrustFade	=  -1;	//amount to decrease trust when not near player
+	int trustFade		=   1;	//amount to increase trust when not near player
+	int sight			= 150; 
+	int fireThreshold	= -50;	//bot will start shooting back if trust is this low
+	int pointNoReturn	= -80;	//bot will not gain trust again if trust drops below this level
 
 	/**
 	 * Keep track of updates to trust 
@@ -75,7 +78,7 @@ behaving_entity Advanced {
 	 */
 	sequential behavior changeTrust() {
 		precondition { 
-			bWME = (BotWME id::id shot==true trustUpdated==false trust > -80)
+			bWME = (BotWME id::id shot==true trustUpdated==false trust > pointNoReturn)
 		}
 		specificity 5;
 		act changeTrust(id, trustDecrease);
@@ -83,11 +86,11 @@ behaving_entity Advanced {
 	}
 	
 	/**
-	 * Increase trust by small amount if not being shot at 
+	 * Increase trust by small amount if near player and not being shot at 
 	 */
 	sequential behavior changeTrust() {
 		precondition { 
-			bWME = (BotWME id::id shot==false trustUpdated==false locationX::botX locationY::botY  trust > -80)
+			bWME = (BotWME id::id shot==false trustUpdated==false locationX::botX locationY::botY  trust > pointNoReturn)
 			(PlayerWME locationX::playerX locationY::playerY)	// locationX invokes PlayerMWE.getLocationX() 
 			BBWME = (BlackBoardWME)
 			(sight > BBWME.calcDistance(playerX, playerY, botX, botY))
@@ -96,6 +99,32 @@ behaving_entity Advanced {
 		act changeTrust(id, trustIncrease);
 		subgoal changeTrust();
 	}
+	
+	
+	/**
+	 * Bring trust to neutral when not near player 
+	 */
+	sequential behavior changeTrust() {
+		precondition {
+			bWME = (BotWME id::id shot==false trustUpdated==false trust > pointNoReturn trust < 0)
+		}
+		specificity 3;
+		act changeTrust(id, trustFade);
+		subgoal changeTrust();
+	}
+	
+	/**
+	 * Bring trust to neutral when not near player
+	 */
+	sequential behavior changeTrust() {
+		precondition {
+			bWME = (BotWME id::id shot==false trustUpdated==false trust > 0)
+		}
+		specificity 3;
+		act changeTrust(id, negTrustFade);
+		subgoal changeTrust();
+	}
+
 	
 	sequential behavior changeTrust() {
 		specificity 1;
