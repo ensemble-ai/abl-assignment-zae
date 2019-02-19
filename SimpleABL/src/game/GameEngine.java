@@ -25,7 +25,7 @@ public class GameEngine extends JPanel implements KeyListener {
 	private Point dimensions = new Point(640, 480);
 
 	/** location of the player character */
-	private Point playerLocation = new Point((int)(dimensions.x*Math.random()), (int)(dimensions.y*Math.random()));
+	private Point playerLocation = new Point((int)(dimensions.x - dimensions.x/4), (int)(dimensions.y - dimensions.y/4));
 
 	/** trajectory of the player character */
 	private Point playerTrajectory = new Point(0, 0);

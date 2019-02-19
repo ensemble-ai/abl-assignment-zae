@@ -35,7 +35,7 @@ public class ChangeTrust extends BaseAction {
 		if (trust > 100) {
 			trust = 100;
 		}
-		System.out.println(trust);
+		//System.out.println(trust);
 		bot.setTrust(trust);
 	}
 }
