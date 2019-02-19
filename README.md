@@ -10,19 +10,31 @@ and a high level of trust by green. A bots color may fall anywhere in this
 range depending on its degree of trust and will slowly fade from one color to
 another as its level of trust changes. 
 
-Our bots wander around the map, avoiding collisions with other bots by maintaining a certain distant away from other bots and
+Our bots wander around the map, avoiding collisions with other bots by 
+maintaining a certain distant away from other bots and
 obstacles. If the player falls within a certain radius of the bot, then it will
-follow the player. The act of following is used to show that the bot is interested in the player.
+follow the player. The act of following is used to show that the bot is 
+interested in the player.
 
 Bots spawn with a random level of trust, but can change through
 interactions with the player. If the player shoots at and hits a bot, the bot’s
 level of trust in the player will decrease. However, if the player spends time
 within sight of the bot and does not shoot at it, the bot’s level of trust in
-the player will slowly increase. A bot will only shoot at the player if it
-distrusts them. In other words, the bot's trust level will change depending on whether the player has successfully shot it.
-This is shown by the color change from green to red and vice versa while the bot is following the player. 
-If the bot is hit, then it's trust level will decrease and change its color towards the red spectrum. If the bot is not hit, then the trust level will increase towards the green spectrum.
-The bot also contains a point of no return for the trust level where the bot will not gain any trust for the player no matter how long the player leaves the bot alone. 
+the player will increase. If a bot is not near the player, its trust will slowly
+return to neutral. 
+The bot also contains a point of no return for the trust level where the bot 
+will not gain any trust for the player no matter how long the player leaves 
+the bot alone. When a bot permantently distrusts the player, it will no longer
+try to follow it around the map. It will wander around unless the player comes
+near it.   
+A bot will only shoot at the player if it
+distrusts them. In other words, the bot's trust level will change depending on 
+whether the player has successfully shot it.
+This is shown by the color change from green to red and vice versa while the bot 
+is following the player. 
+If the bot is hit, then it's trust level will decrease and change its color 
+towards the red spectrum. If the bot is not hit, then the trust level will 
+increase towards the green spectrum.
 
 The player can shoot at the bots by pressing spacebar, and can spawn a new bot
 by pressing n. 
@@ -42,6 +54,8 @@ have not yet come up with a solution that allows bots to break out of this
 position, while maintaining the desired movement behavior of bots when they are
 not "stuck". 
 
+Due to this bug, we discourage spawning excess bots during gameplay. This seems 
+to increase the likelihood of the error occuring. 
 
 # Assignment Instructions
 For this assignment, you will be authoring rudimentary, intermediate, and advanced ABL behaviors for a single agent that controls multiple bots.
