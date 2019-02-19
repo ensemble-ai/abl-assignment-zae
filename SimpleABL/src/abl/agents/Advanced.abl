@@ -58,7 +58,7 @@ behaving_entity Advanced {
 	int distance = 15;
 	int playerDistance = 30;
 	int trustDecrease = -10;
-	int trustIncrease = 5;
+	int trustIncrease = 2;
 	int sight = 150;
 	int fireThreshold = -50;
 
