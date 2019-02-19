@@ -69,13 +69,13 @@ behaving_entity Advanced {
 		subgoal Wait(500);
 		subgoal changeTrust();
 	}
-
+	
 	/**
 	 * Decrease trust when player has been shot
 	 */
 	sequential behavior changeTrust() {
 		precondition { 
-			bWME = (BotWME id::id shot==true trustUpdated==false)
+			bWME = (BotWME id::id shot==true trustUpdated==false trust > -80)
 		}
 		specificity 5;
 		act changeTrust(id, trustDecrease);
@@ -83,11 +83,11 @@ behaving_entity Advanced {
 	}
 	
 	/**
-	 * Increase trust by small amout if not being shot at 
+	 * Increase trust by small amount if not being shot at 
 	 */
 	sequential behavior changeTrust() {
 		precondition { 
-			bWME = (BotWME id::id shot==false trustUpdated==false locationX::botX locationY::botY)
+			bWME = (BotWME id::id shot==false trustUpdated==false locationX::botX locationY::botY  trust > -80)
 			(PlayerWME locationX::playerX locationY::playerY)	// locationX invokes PlayerMWE.getLocationX() 
 			BBWME = (BlackBoardWME)
 			(sight > BBWME.calcDistance(playerX, playerY, botX, botY))

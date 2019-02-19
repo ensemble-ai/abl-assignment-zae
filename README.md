@@ -1,6 +1,6 @@
-#ABL-Assignment
+# ABL-Assignment
 
-##Trust 
+## Trust 
 Our goal for this assignment is to model the social property of trust 
 and incorporate this into our playable experience. We want a bot’s level 
 of trust to influence how it interacts with the player therefore we gave
@@ -22,11 +22,12 @@ the player will slowly increase. A bot will only shoot at the player if it
 distrusts them. In other words, the bot's trust level will change depending on whether the player has successfully shot it.
 This is shown by the color change from green to red and vice versa while the bot is following the player. 
 If the bot is hit, then it's trust level will decrease and change its color towards the red spectrum. If the bot is not hit, then the trust level will increase towards the green spectrum.
+The bot also contains a point of no return for the trust level where the bot will not gain any trust for the player no matter how long the player leaves the bot alone. 
 
 The player can shoot at the bots by pressing spacebar, and can spawn a new bot
 by pressing n. 
 
-##A Note on Bugs
+## A Note on Bugs
 We are aware of a movement bug in our code. The problem occurs when a bot is
 spawned on top of another bot. When this happens, both bots freeze and are
 unable to move. This is because of the way we detect collision. Our bots will
@@ -41,20 +42,21 @@ have not yet come up with a solution that allows bots to break out of this
 position, while maintaining the desired movement behavior of bots when they are
 not "stuck". 
 
-#Assignment Instructions
+
+# Assignment Instructions
 For this assignment, you will be authoring rudimentary, intermediate, and advanced ABL behaviors for a single agent that controls multiple bots.
 
-##Starter Tasks
+## Starter Tasks
 * Add a move action that takes a (int xdir, int ydir, int id) as input.
 * Make a MoveTo behavior that moves a bot to a target location over time.
 * Add a SetColor action that takes (int r, int b, int g, int id).
 * Add color sensing to the BotWME (this includes changes to BotSensor.java and BotWME.java).
 
-##Intermediate Tasks
+## Intermediate Tasks
 * Add on action that creates a new Bot
 * Create 4 bots and have them keep a formation around the player.
 
-##Advanced Tasks
+## Advanced Tasks
 Design and create a multi-bot social interaction that communicates to the player via movement and bot color. The player should be able to interact with your multi-bot behavior set through movement, shooting, or some other user interaction that you design.
 
 Here are some spaces you can design multi-bot social interactions for but feel free to create your own:
@@ -63,20 +65,20 @@ Here are some spaces you can design multi-bot social interactions for but feel f
 * stigma - if the character or a bot had a stigma (i.e. an extremely undesirable social quality), how would the bots react? If a bot or player interacted with the stigmatized character, how should the others react?
 * building trust - The player starts as not being trusted by the bots. How would they gain their trust and how would the bots performance change?
 
-##Group Work Policy
+## Group Work Policy
 You may work in teams of up to 4 people.
 
-##Grading
+## Grading
 This assigment will be graded on a 100 point scale.
 * 30 Starter Tasks
 * 30 Intermediate Tasks
 * 40 Advanced Tasks
 
-##Turn-in
+## Turn-in
 Push your code to your group's GitHub Classroom repository. The master branch will be graded.
 
 
-##Questions and Answers
+## Questions and Answers
 *Question:* How do I build and run the project?
 
 *Answer:* The process runs in two steps: 1) compile the .abl code into .java classes and 2) run the GameEngine with the newly-generated code. To help you with this, there are two classes that have a entry point for execution (i.e. they have a '''static void main(String args[])''' function declared):
