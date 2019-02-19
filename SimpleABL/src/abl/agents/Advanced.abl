@@ -78,7 +78,7 @@ behaving_entity Advanced {
 	 */
 	sequential behavior changeTrust() {
 		precondition { 
-			bWME = (BotWME id::id shot==true trustUpdated==false trust > pointNoReturn)
+			bWME = (BotWME id::id shot==true trustUpdated==false) //trust > pointNoReturn)
 		}
 		specificity 5;
 		act changeTrust(id, trustDecrease);
@@ -196,12 +196,25 @@ behaving_entity Advanced {
 	}
 
 	/**
-	 * move bots in random direction
+	 * starts wandering behavior when bot's trust has dipped below point of no return 
+	 */
+	sequential behavior wander() {
+		precondition {
+			bWME = (BotWME id::id moved==false wandering==false trust<=pointNoReturn)
+		}
+		specificity 9;
+		
+		act startWandering(id);
+		
+		subgoal wander();
+	}
+	
+	/**
 	 * stops wandering if bot sees player
 	 */
 	sequential behavior wander() {
 		precondition {
-			bWME = (BotWME id::id moved==false wandering==true locationX::X locationY::Y)
+			bWME = (BotWME id::id moved==false wandering==true locationX::X locationY::Y trust > pointNoReturn)
 			(PlayerWME locationX::playerX locationY::playerY)
 			BBWME = (BlackBoardWME)
 			(sight > BBWME.calcDistance(playerX, playerY, X, Y))
